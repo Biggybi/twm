@@ -56,14 +56,11 @@ export default function SearchBox() {
   const [employees, setEmployees] = useState<IEmployee[]>([]);
   const [pageTitle, setPageTitle] = useState(false);
   const [searchOK, setSearchOK] = useState(true);
-  const [started, setStarted] = useState(false);
 
   // search once when component loads
   useEffect(() => {
-    if (started) return;
-    setStarted(true);
     searchEmployee('');
-  });
+  }, [searchOK]);
 
   async function searchEmployee(pattern: string) {
     if (pattern == '') pattern = '*';
@@ -106,6 +103,7 @@ export default function SearchBox() {
             onChangeText={searchTerm => {
               setSearchTerm(searchTerm);
               searchEmployee(searchTerm);
+              console.log('onChangeText');
             }}
             // onResponderStart={searchTerm => {
             //   // setSearchTerm('*');
@@ -125,6 +123,7 @@ export default function SearchBox() {
             onPress={() => {
               setSearchTerm('');
               searchEmployee('');
+              console.log('onPress');
             }}>
             <Text style={styles.clearSearchButtonText}>X</Text>
           </TouchableOpacity>
