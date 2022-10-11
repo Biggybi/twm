@@ -73,12 +73,12 @@ export default function SearchBox() {
         method: 'GET',
       });
       const data = await res.json();
-      setSearchOK(data.ttEmployee.length != 0);
+      setSearchOK(data.Data.length != 0);
       if (!res.ok) {
         setEmployees([]);
         return {error: data.code};
       }
-      return setEmployees(data.ttEmployee);
+      return setEmployees(data.Data);
     } catch (err) {
       setSearchOK(false);
       return {error: err};
