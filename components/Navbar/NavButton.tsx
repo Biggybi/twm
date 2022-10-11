@@ -1,33 +1,30 @@
 export default interface INavButton {
-  id?: number;
+  key?: number;
   name?: string;
   image?: any;
   color?: string;
   style?: object;
 }
 
-import React, { useState } from 'react';
+import React from 'react';
 import {
   StyleSheet,
   Text,
   View,
   TouchableOpacity,
-  ImageComponent,
   Image,
 } from 'react-native';
-import { Bluetooth } from '../../assets/iconoir/packages/iconoir-react-native/src';
 
 export function NavButton(props: {
   navButton: INavButton;
-  callback: (id: number) => void;
+  callback: (key: number) => void;
 }) {
   var image = props.navButton.image;
-  console.log("image = ", image);
   return (
     <View style={styles.navbar}>
       <TouchableOpacity
         onPress={() => {
-          props.callback(props.navButton.id ?? 0);
+          props.callback(props.navButton.key ?? 0);
         }}>
         <View style={[props.navButton.style, styles.button]}>
           <Image style={styles.image} source={image} />

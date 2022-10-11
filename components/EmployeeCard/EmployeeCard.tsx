@@ -14,7 +14,7 @@ import {
 } from 'react-native';
 
 export default interface IEmployee {
-  id?: number;
+  key?: number;
   firstname?: string;
   lastname?: string;
   roles?: string;
@@ -22,7 +22,7 @@ export default interface IEmployee {
 }
 
 export function Employee(employee: IEmployee) {
-  // if (employee.id == 0) return null;
+  // if (employee.key == 0) return null;
   if (!{...employee}) return null;
   console.log({...employee});
   return (
@@ -54,7 +54,7 @@ export function Employee(employee: IEmployee) {
           <View style={styles.CardInfos}>
             <Text style={styles.CardInfo}>{employee.roles}</Text>
             <Text style={styles.CardInfo}>{employee.teams}</Text>
-            <Text style={styles.CardID}>id = {employee.id}</Text>
+            <Text style={styles.CardID}>key = {employee.key}</Text>
           </View>
         </View>
       </View>
