@@ -8,10 +8,11 @@
  * @format
  */
 
-import React, {ReactDOM, useEffect, useState} from 'react';
-import SearchBox from './components/SearchBox/SearchBox';
+import React, {useEffect, useState} from 'react';
 import Home from './components/Home/Home';
 import Login from './components/Login/Login';
+import Teams from './components/Teams/Teams';
+import EmployeeList from './components/EmployeeCard/EmployeesList';
 import Navbar from './components/Navbar/Navbar';
 import { useKeyboardVisible } from './hooks/keyboard_visible';
 
@@ -19,6 +20,7 @@ import {
   StyleSheet,
   View,
 } from 'react-native';
+import Planning from './components/Planning/Planning';
 
 export default function App() {
   useEffect(() => {
@@ -34,10 +36,10 @@ export default function App() {
   // bind to navBarItems
   const tabsComponents:JSX.Element[] = [
     <Home></Home>,
+    <Planning></Planning>,
+    <Teams></Teams>,
+    <EmployeeList></EmployeeList>,
     <Login></Login>,
-    <Login></Login>,
-    <SearchBox></SearchBox>,
-    <SearchBox></SearchBox>,
   ];
   
   // that's the application
@@ -57,7 +59,7 @@ export default function App() {
 
 // styles for components
 const styles = StyleSheet.create({
-  // the 'body' wrapper (for e.g. custom global border radius color)
+  // the top level wrapper (for e.g. custom global border radius color)
   pageWrap: { flex: 1, backgroundColor: 'black', },
 
   // the body (with header/footer)

@@ -1,88 +1,33 @@
 
-import React, {useEffect, useState, Component} from 'react';
-
-import IEmployee, {Employee} from '../EmployeeCard/EmployeeCard';
-// import SearchIcon from './search.svg';
-import {ReactDOM} from 'react';
+import React, {useEffect, useState} from 'react';
 
 import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
   StyleSheet,
   Text,
   TextInput,
-  useColorScheme,
   View,
   Image,
-  TouchableNativeFeedback,
-  Button,
-  FlatList,
-  ListRenderItemInfo,
-  ListRenderItem,
   TouchableOpacity,
-  DatePickerAndroid,
 } from 'react-native';
+import { apiSearch } from '../../tools/apiGet';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
-
-import {type PropsWithChildren} from 'react';
-
-class Urls {
-  base: string;
-  employee: string;
-  employee_name: string;
-  employee_id: string;
-  constructor() {
-    this.base = 'http://192.168.0.21:8090/twm/web/';
-    this.employee = 'http://192.168.0.21:8090/twm/web/employee/';
-    this.employee_name = 'http://192.168.0.21:8090/twm/web/employee/name/';
-    this.employee_id = 'http://192.168.0.21:8090/twm/web/employee/id/';
-  }
-  get_url(pattern: string) {
-    return (Number(pattern) ? this.employee_id : this.employee_name) + pattern;
-  }
-}
-
-export default function SearchBox() {
+export default function SearchBox(props: {
+  data: string;
+  setData: (data: any) => any;
+}) {
   const [searchTerm, setSearchTerm] = useState<string>('');
-  // const [employees, setEmployees] = useState<IEmployee[]>([]);
-  const [employees, setEmployees] = useState<IEmployee[]>([]);
   const [pageTitle, setPageTitle] = useState(false);
   const [searchOK, setSearchOK] = useState(true);
+  const [starting, setStarting] = useState(true);
 
   // search once when component loads
   useEffect(() => {
-    searchEmployee('');
+    if (!starting) return;
+    setStarting(false);
+    apiSearch('data', '', props.setData, setSearchOK);
   }, [searchOK]);
 
-  async function searchEmployee(pattern: string) {
-    if (pattern == '') pattern = '*';
-    const url = new Urls().get_url(pattern);
-    try {
-      const res = await fetch(url, {
-        method: 'GET',
-      });
-      const data = await res.json();
-      setSearchOK(data.ttEmployee.length != 0);
-      if (!res.ok) {
-        setEmployees([]);
-        return {error: data.code};
-      }
-      return setEmployees(data.ttEmployee);
-    } catch (err) {
-      setSearchOK(false);
-      return {error: err};
-    }
-  }
-
-  // if (searchTerm == '') searchEmployee('*');
+  // if (searchTerm == '') apiSearch('*');
 
   return (
     // "app"
@@ -102,13 +47,8 @@ export default function SearchBox() {
             value={searchTerm}
             onChangeText={searchTerm => {
               setSearchTerm(searchTerm);
-              searchEmployee(searchTerm);
-              console.log('onChangeText');
+              apiSearch(props.data, searchTerm, props.setData, setSearchOK);
             }}
-            // onResponderStart={searchTerm => {
-            //   // setSearchTerm('*');
-            //   searchEmployee('*');
-            // }}
             placeholder=" co-workers (filter by name or number)"
           />
           {!searchOK && (
@@ -122,29 +62,11 @@ export default function SearchBox() {
             style={styles.clearSearchButton}
             onPress={() => {
               setSearchTerm('');
-              searchEmployee('');
-              console.log('onPress');
+              apiSearch('data', '', props.setData, setSearchOK);
             }}>
             <Text style={styles.clearSearchButtonText}>X</Text>
           </TouchableOpacity>
         </View>
-      </View>
-
-      {/* <Image
-        // alt="search"
-        // onClick={() => searchEmployee(searchTerm)}
-      /> */}
-
-      <View style={styles.employeesList}>
-        {searchOK && (
-          <FlatList
-            keyExtractor={employee => employee.id}
-            data={employees}
-            renderItem={employee => {
-              return <Employee {...employee.item} />;
-            }}
-          />
-        )}
       </View>
     </View>
   );
@@ -152,9 +74,10 @@ export default function SearchBox() {
 
 const styles = StyleSheet.create({
   page: {
-    flex: 1,
+    // flex: 1,
     // flexDirection: 'column',
     backgroundColor: 'darkgrey',
+    // backgroundColor: 'red',
     borderRadius: 20,
     // padding: 10,
     // height: '100%',
@@ -175,7 +98,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#555555',
   },
 
-  employeesList: {
+  datasList: {
     flex: 1,
     borderRadius: 20,
     // allow scrollbar offset
