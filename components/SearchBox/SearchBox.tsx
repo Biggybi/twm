@@ -1,4 +1,3 @@
-
 import React, {useEffect, useState} from 'react';
 
 import {
@@ -9,57 +8,99 @@ import {
   Image,
   TouchableOpacity,
 } from 'react-native';
-import { apiSearch } from '../../tools/apiGet';
+import apiSearch from '../../tools/apiGet';
+import useFetch from '../../hooks/useFetch';
 
+// // search once when component loads
+// useEffect(() => {
+//   // console.log('SearchBox useEffect before if: starting = ', starting);
+//   // if (!starting) return;
+//   // setStarting(false);
+//   // setSearchTerm(pattern);
+//   // setUnsubscribed(false);
+//   apiSearch(
+//     props.data,
+//     pattern,
+//     props.setData,
+//     setSearchOK,
+//     // unsubscribed,
+//     // setUnsubscribed,
+//   );
+//   // return () => {
+//   //   setUnsubscribed(true);
+//   // };
+// }, [pattern])
+
+// var starting = true;
 export default function SearchBox(props: {
-  data: string;
-  setData: (data: any) => any;
+  dataType: string;
+  // setData: (dataType: any) => any;
+  setData: Function;
 }) {
-  const [searchTerm, setSearchTerm] = useState<string>('');
-  const [pageTitle, setPageTitle] = useState(false);
-  const [searchOK, setSearchOK] = useState(true);
-  const [starting, setStarting] = useState(true);
+  const [pattern, setSearchTerm] = useState<string>('');
+  // const [searchOK, setSearchOK] = useState(true);
+  console.log('datatype =', props.dataType, 'pattern = ', pattern);
+  // const [unsubscribed, setUnsubscribed] = useState(false);
+  // const abortController = new AbortController;
+  // var abort = abortController.abort();
+  // console.log("abort = ", abort);
+  // const controller = new AbortController;
 
-  // search once when component loads
+  // const url = `http://jsonplaceholder.typicode.com/posts`
+  interface ItemContent {
+    firstname: string;
+    lastname: string;
+    key: string;
+  }
+  interface Item {
+    Data: [ItemContent];
+  }
+
+  const {data, error, state} = useFetch<Item>(props.dataType, pattern);
+  console.log('employee data =', data);
+  console.log('state =', state);
+  const searchOK: boolean = Boolean(
+    (state != 'error' && data?.Data.length) || state == 'loading',
+  );
   useEffect(() => {
-    if (!starting) return;
-    setStarting(false);
-    apiSearch('data', '', props.setData, setSearchOK);
-  }, [searchOK]);
+    if (state != 'loading') props.setData(data?.Data);
+  }), [data, error, state];
+  console.log('error =', error);
+  // console.log("Data[] =", data.Data)
+  console.log('searchOK', searchOK);
 
+  // if (error) return <Text>There is an error.</Text>;
+  // if (!data) return <Text>Loading...</Text>;
+
+  // props.setData
+  // if (error || !data) {
+  //   setSearchOK(false);
+  //   return;
+  // }
   return (
-    // "app"
-    <View style={styles.page}>
-
-      {/* search bar */}
-      <View style={searchOK ? styles.searchBar : styles.searchBarFailed}>
-        <View style={styles.searchBox}>
+    <View style={searchOK ? styles.searchBar : styles.searchBarFailed}>
+      <View style={styles.searchBox}>
+        <View style={styles.searchIconWrap}>
           <Image
             style={styles.searchIcon}
             source={require('../../assets/search-icon.png')}
           />
+        </View>
+        <View style={styles.searchInputWrap}>
           <TextInput
             style={styles.searchInput}
-            value={searchTerm}
-            onChangeText={searchTerm => {
-              setSearchTerm(searchTerm);
-              apiSearch(props.data, searchTerm, props.setData, setSearchOK);
-            }}
-            placeholder=" co-workers (filter by name or number)"
+            value={pattern}
+            onChangeText={pattern => setSearchTerm(pattern)}
+            placeholder=" co-workers (by name or ID)"
           />
-          {!searchOK && (
-            <View style={styles.searchBoxNotFound}>
-              <Text>No match</Text>
+            <View style={styles.searchBoxHint}>
+              <Text>{!searchOK && ('No match')}</Text>
             </View>
-          )}
         </View>
         <View style={styles.clearSearchButtonZone}>
           <TouchableOpacity
             style={styles.clearSearchButton}
-            onPress={() => {
-              setSearchTerm('');
-              apiSearch('data', '', props.setData, setSearchOK);
-            }}>
+            onPress={() => setSearchTerm('')}>
             <Text style={styles.clearSearchButtonText}>X</Text>
           </TouchableOpacity>
         </View>
@@ -69,120 +110,61 @@ export default function SearchBox(props: {
 }
 
 const styles = StyleSheet.create({
-  page: {
-    backgroundColor: 'darkgrey',
-    borderRadius: 20,
-    // padding: 10,
-    // height: '100%',
-  },
-
-  pageBackGround: {
-    flex: 1,
-    // flexDirection: 'column',
-    backgroundColor: 'black',
-    // borderRadius: 20,
-    // padding: 10,
-  },
-
-  siteTitle: {
-    // height: 0,
-    // hidden: 1,
-    // flex: 1,
-    backgroundColor: '#555555',
-  },
-
-  datasList: {
-    flex: 1,
-    borderRadius: 20,
-    // allow scrollbar offset
-    paddingLeft: 30,
-    paddingRight: 10,
-  },
-
   searchBar: {
-    // flex: 1,
-    // flexDirection: 'row',
     height: 50,
     margin: 10,
-    marginBottom: 0,
     alignItems: 'center',
     paddingHorizontal: 10,
     borderRadius: 20,
-    // backgroundColor: 'grey',
     borderColor: 'grey',
-    // borderColor: 'teal',
     borderWidth: 2,
-    // flexGrow: 1,
   },
 
   searchBarFailed: {
-    // flex: 1,
     height: 50,
     margin: 10,
-    marginBottom: 0,
     alignItems: 'center',
     paddingHorizontal: 10,
     borderRadius: 20,
-    // backgroundColor: 'orange',
     borderColor: 'darkorange',
     borderWidth: 2,
-    // flexGrow: 1,
   },
-  
+
   searchBox: {
-    // flex: 7,
-    // borderColor: '#c3c3c3',
-    // borderWidth: 2,
-    // borderRadius: 20,
-    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    width: '100%',
-    marginRight: 10,
-    paddingLeft: 10,
-    // elevation: 8,
-    // backgroundColor: 'pink',
+  },
+
+  searchIconWrap: {
+    flex: 0.7,
+    alignContent: 'center',
+    alignItems: 'center',
   },
 
   searchIcon: {
     width: 20,
     height: 20,
-    // marginRight: 10,
+  },
+
+  searchInputWrap: {
+    flex: 6,
+    flexDirection: 'row',
+    // backgroundColor: 'yellow'
   },
 
   searchInput: {
-    // backgroundColor: 'pink',
-    // width: 20,
-    width: '90%',
-    // height: 20,
-    paddingLeft: 10,
+    flex: 10,
   },
 
-  searchBoxNotFound: {
-    // flex: 4,
-    // flexGrow: 4,
-    // backgroundColor : 'red',
-    // position: 'absolute',
-    right: 80,
-    // borderColor: '#c3c3c3',
-    // borderWidth: 2,
-    // borderRadius: 20,
-    // marginRight: 0,
-    // paddingLeft: 0,
+  searchBoxHint: {
+    flex: 3.5,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 
   clearSearchButtonZone: {
-    position: 'absolute',
-    right: 0,
-    width: 50,
-    justifyContent: 'center',
-    alignItems: 'center',
-    // flex: 1,
-    // flexGrow: 1,
+    flex: 0.5,
     // backgroundColor: 'red',
-    height: '100%',
-    borderRadius: 20,
-    fontSize: 19,
   },
 
   clearSearchButton: {
@@ -191,24 +173,11 @@ const styles = StyleSheet.create({
     height: '100%',
     width: '100%',
     textAlignVertical: 'auto',
-    // fontStyle: 'bold',
-    // backgroundColor: 'red',
-    // backgroundColor: '#555555',
-    // borderStyle: "solid",
-    // borderWidth: 2,
-    // borderColor: '#c3c3c3',
-    // borderRadius: 10,
   },
 
   clearSearchButtonText: {
     justifyContent: 'center',
     alignItems: 'center',
     fontSize: 19,
-    // fontStyle: 'bold',
-    // borderWidth: 2,
-    // borderColor: '#c3c3c3',
-    // borderRadius: 10,
   },
-  
-  
 });

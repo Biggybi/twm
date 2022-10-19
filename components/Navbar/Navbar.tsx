@@ -1,9 +1,6 @@
-import {
-  StyleSheet,
-  FlatList,
-} from 'react-native';
+import {StyleSheet, FlatList, View} from 'react-native';
 
-import INavButton, {NavButton } from './NavButton';
+import INavButton, {NavButton} from './NavButton';
 
 type TNavBarList = Array<INavButton>;
 
@@ -14,7 +11,11 @@ let navBarItems: TNavBarList = [
     name: 'home',
     image: require('../../assets/icons/home.png'),
     style: {
-      backgroundColor: 'red',
+      // borderWidth: 4,
+      // backgroundColor: 'red',
+      // borderColor: 'darkred',
+      // borderRadius: 20,
+      // height: '100%',
     },
   },
   {
@@ -22,7 +23,12 @@ let navBarItems: TNavBarList = [
     name: 'planning',
     image: require('../../assets/icons/calendar.png'),
     style: {
-      backgroundColor: 'pink',
+      // borderWidth: 4,
+      // backgroundColor: 'pink',
+      // borderColor: 'magenta',
+      // borderRadius: 20,
+      // height: '100%',
+      // marginHorizontal: 5,
     },
   },
   {
@@ -30,7 +36,12 @@ let navBarItems: TNavBarList = [
     name: 'teams',
     image: require('../../assets/icons/users-alt.png'),
     style: {
-      backgroundColor: 'blue',
+      // borderWidth: 4,
+      // backgroundColor: 'blue',
+      // borderColor: 'darkblue',
+      // borderRadius: 20,
+      // height: '100%',
+      // marginHorizontal: 5,
     },
   },
   {
@@ -38,7 +49,12 @@ let navBarItems: TNavBarList = [
     name: 'people',
     image: require('../../assets/icons/users.png'),
     style: {
-      backgroundColor: 'purple',
+      // borderWidth: 4,
+      // backgroundColor: 'magenta',
+      // borderColor: 'purple',
+      // borderRadius: 20,
+      // height: '100%',
+      // marginHorizontal: 5,
     },
   },
   {
@@ -46,32 +62,43 @@ let navBarItems: TNavBarList = [
     name: 'profile',
     image: require('../../assets/icons/settings.png'),
     style: {
-      backgroundColor: 'orange',
+      // borderWidth: 4,
+      // backgroundColor: 'yellow',
+      // borderColor: 'darkorange',
+      // borderRadius: 20,
+      // height: '100%',
+      // marginHorizontal: 5,
     },
   },
 ];
 
-export default function Navbar(props: {callback: (key: number) => void}) {
+export default function Navbar(props: {
+  callback: (key: number) => void;
+  tabid: number;
+}) {
   return (
-    <FlatList
-      // horizontal={true}
-      // onViewableItemsChanged={onViewableItemsChanged}
-      columnWrapperStyle={styles.listColumnWrapper}
-      numColumns={navBarItems.length}
-      // keyExtractor={navBarItems => navBarItems.key}
-      data={navBarItems}
-      renderItem={navBarItems => {
-        var item: INavButton = {...navBarItems.item};
-        return <NavButton navButton={item} callback={props.callback} />;
-      }}
-    />
+    <View>
+      <FlatList
+        // horizontal={true}
+        // onViewableItemsChanged={onViewableItemsChanged}
+        columnWrapperStyle={styles.listColumnWrapper}
+        numColumns={navBarItems.length}
+        // keyExtractor={navBarItems => navBarItems.key}
+        data={navBarItems}
+        renderItem={navBarItems => (
+          <NavButton
+            navButton={{...navBarItems.item}}
+            callback={props.callback}
+            tabid={props.tabid}
+          />
+        )}
+      />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   listColumnWrapper: {
-    height: 70,
-    margin: 0,
-    padding: 0,
+    height: 50,
   },
 });

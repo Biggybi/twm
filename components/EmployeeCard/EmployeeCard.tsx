@@ -1,30 +1,17 @@
 import React from 'react';
 
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  TextInput,
-  useColorScheme,
-  View,
-  Image,
-  TouchableNativeFeedback,
-} from 'react-native';
+import {StyleSheet, Text, View, Image} from 'react-native';
 
 export default interface IEmployee {
-  key?: number;
-  firstname?: string;
-  lastname?: string;
+  key: number;
+  firstname: string;
+  lastname: string;
   roles?: string;
   teams?: string;
 }
 
-export function Employee(employee: IEmployee) {
-  // if (employee.key == 0) return null;
-  if (!{...employee}) return null;
-  console.log({...employee});
+export function EmployeeCard(props: {employee: IEmployee}) {
+  const employee = props.employee
   return (
     <View style={styles.Card}>
       {/* <View>
@@ -40,7 +27,7 @@ export function Employee(employee: IEmployee) {
       <View style={styles.CardLeft}>
         <View style={styles.CardTitle}>
           <Text>
-            {employee.firstname} {employee.lastname}
+            {employee.firstname} {employee.lastname} {employee.roles}
           </Text>
         </View>
 
@@ -73,35 +60,18 @@ export function Employee(employee: IEmployee) {
   );
 }
 
-
 const styles = StyleSheet.create({
   Card: {
-    // padding: 30,
-    height: 120,
+    height: 140,
     padding: 10,
-    marginVertical: 10,
-    // scrollbar offset compensation
-    marginRight: 20,
+    margin: 10,
     borderRadius: 20,
-    // borderColor: 'teal',
-    // borderWidth: 4,
     backgroundColor: '#CED0CE',
-    // flex: 1,
     flexDirection: 'row',
   },
 
   CardLeftBody: {
-    // padding: 30,
-    // height: 120,
-    // padding: 10,
-    // marginVertical: 10,
-    // scrollbar offset compensation
-    // marginRight: 20,
-    // borderRadius: 20,
-    // borderColor: 'teal',
-    // borderWidth: 4,
     backgroundColor: '#CED0CE',
-    // backgroundColor: 'red',
     flex: 3,
     flexDirection: 'row',
   },
@@ -109,59 +79,28 @@ const styles = StyleSheet.create({
   CardLeft: {
     backgroundColor: '#CED0CE',
     flex: 4,
-    // flexDirection: 'row',
   },
 
-  // EmployeeNotFound: {
-  //   // padding: 30,
-  //   justifyContent: 'center',
-  //   alignItems: 'center',
-  //   height: 60,
-  //   marginVertical: 10,
-  //   borderRadius: 20,
-  //   backgroundColor: '#CED0CE',
-  //   // flex: 1,
-  //   // flexGrow: 1,
-  //   borderColor: 'darkorange',
-  //   borderWidth: 4,
-  //   // color: 'red',
-  // },
 
   CardTitle: {
-    // top: 15,
-    // height: 70,
-    // width: 70,
-    marginRight: 10,
   },
 
   CardIconBox: {
     flex: 1,
-    // backgroundColor: 'red',
     justifyContent: 'center',
     marginTop: 6,
-    // height: 70,
-    // width: 70,
-    // flex: 1,
-    marginRight: 10,
-    // width: '15%',
     alignItems: 'center',
   },
 
   CardIcon: {
-    // backgroundColor: 'red',
     justifyContent: 'center',
     marginTop: 6,
     height: 70,
     width: 70,
-    // flex: 1,
-    marginRight: 10,
-    // width: '15%',
     alignItems: 'center',
   },
 
   CardInfos: {
-    // backgroundColor: 'green',
-    // width: 170,
     flex: 2,
     justifyContent: 'center',
   },
@@ -170,20 +109,16 @@ const styles = StyleSheet.create({
     left: 10,
     height: '100%',
     alignSelf: 'flex-end',
-    // width: 50,
-    // backgroundColor: 'blue',
     borderRadius: 20,
-    // justifyContent: 'center',
-    // alignItems: 'center',
     flex: 1,
   },
 
   CardAction: {
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     height: '25%',
     borderRadius: 20,
-    margin: 5,
   },
 
   CardInfo: {

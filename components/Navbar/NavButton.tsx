@@ -6,7 +6,6 @@ export default interface INavButton {
   style?: object;
 }
 
-import React from 'react';
 import {
   StyleSheet,
   Text,
@@ -18,6 +17,7 @@ import {
 export function NavButton(props: {
   navButton: INavButton;
   callback: (key: number) => void;
+  tabid: number;
 }) {
   var image = props.navButton.image;
   return (
@@ -26,13 +26,11 @@ export function NavButton(props: {
         onPress={() => {
           props.callback(props.navButton.key ?? 0);
         }}>
-        <View style={[props.navButton.style, styles.button]}>
+        <View style={ props.navButton.key == props.tabid ?
+          [props.navButton.style, styles.buttonFocused] :
+          [props.navButton.style, styles.button]
+          }>
           <Image style={styles.image} source={image} />
-          <Text>{props.navButton.name}</Text>
-          {/* <Image
-            style={styles.image}
-            source={require('../../assets/user-icon_default.png')}
-          /> */}
         </View>
       </TouchableOpacity>
     </View>
@@ -40,45 +38,33 @@ export function NavButton(props: {
 }
 
 const styles = StyleSheet.create({
-  button: {
-    // padding: 10,
-    // height: 100,
-    height: '100%',
-    // justifyContent: 'center',
-    // alignItems: 'center',
-    // width: 100,
-    // textAlignVertical: 'auto',
-    // flex: 1,
-    // fontStyle: 'bold',
+  buttonFocused: {
     display: 'flex',
     alignItems: 'center',
+    borderWidth: 2,
+    borderColor: 'lightgray',
     justifyContent: 'center',
+    borderRadius: 20,
+    height: '100%',
+    marginHorizontal: 5,
+  },
+  button: {
 
-    // backgroundColor: 'green',
-    // margin: 10,
-    // padding: 10,
-    // backgroundColor: '#555555',
-    // borderStyle: "solid",
-    // borderWidth: 2,
-    // borderColor: '#c3c3c3',
-    // borderRadius: 10,
+    display: 'flex',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: 'black',
+    justifyContent: 'center',
+    borderRadius: 20,
+    height: '100%',
+    marginHorizontal: 5,
   },
   navbar: {
-    // bottom: 0,
-    // height: '100%',
-    // justifyContent: 'center',
-    // alignItems: 'center',
-    // padding: 1,
     flex: 1,
-    // flexDirection: 'column',
+    flexDirection: 'column',
   },
-  image:{ 
-    // justifyContent: 'center',
-    width: 15,
-    height: 15,
-    // marginTop:10,
-    // width: '100%',
-    // height: '100%',
-    // backgroundColor: 'blue',
+  image: {
+    width: 20,
+    height: 20,
   },
-}) 
+}); 

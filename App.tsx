@@ -12,8 +12,9 @@ import React, {useEffect, useState} from 'react';
 import Home from './components/Home/Home';
 import Login from './components/Login/Login';
 import Teams from './components/Teams/Teams';
-import EmployeeList from './components/EmployeeCard/EmployeesList';
+import Employees from './components/EmployeeCard/Employees';
 import Navbar from './components/Navbar/Navbar';
+// import Swiper from 'react-native-swiper';
 import { useKeyboardVisible } from './hooks/keyboard_visible';
 
 import {
@@ -23,33 +24,31 @@ import {
 import Planning from './components/Planning/Planning';
 
 export default function App() {
+console.log('========================')
+  // keep track of current tab (by ID)
+  const [tabID, setTabID] = useState<number>(3);
+
   useEffect(() => {
     console.log('App tabID =', tabID);
-  });
-
-// keep track of current tab (by ID)
-  const [tabID, setTabID] = useState<number>(0);
-
-  // return <Login />
-  // return <Home />
-
-  // bind to navBarItems
-  const tabsComponents:JSX.Element[] = [
-    <Home></Home>,
-    <Planning></Planning>,
-    <Teams></Teams>,
-    <EmployeeList></EmployeeList>,
-    <Login></Login>,
-  ];
+}, [tabID]);
   
+  // bind to navBarItems
+  const Pages = [
+    <Home />,
+    <Planning />,
+    <Teams />,
+    <Employees />,
+    <Login />,
+  ];
+
   // that's the application
   return (
     <View style={styles.pageWrap}>
       <View style={styles.body}>
-        <View style={styles.page}>{tabsComponents[tabID]}</View>
+        <View style={styles.currentPage}>{Pages[tabID]}</View>
         {!useKeyboardVisible() && (
-          <View>
-            <Navbar callback={setTabID} />
+          <View style={styles.navBar}>
+            <Navbar callback={setTabID} tabid={tabID} />
           </View>
         )}
       </View>
@@ -59,12 +58,26 @@ export default function App() {
 
 // styles for components
 const styles = StyleSheet.create({
-  // the top level wrapper (for e.g. custom global border radius color)
-  pageWrap: { flex: 1, backgroundColor: 'black', },
+  pageWrap: {
+    flex: 1,
+    backgroundColor: 'black',
+  },
 
-  // the body (with header/footer)
-  body: {flex: 1, backgroundColor: 'darkgrey', borderRadius: 20},
+  body: {
+    flex: 1,
+    backgroundColor: 'darkgrey',
+  },
 
-  // the 'page' that is displayed in the body, according to the Navigation Bar
-  page: {flex: 1},
+  currentPage: {
+    flex: 15,
+  },
+
+  navBar: {
+    // flex: 1,
+    // height:80,
+    // alignContent: 'space-around',
+    // backgroundColor: 'blue',
+    marginVertical: 5,
+    
+  },
 });
