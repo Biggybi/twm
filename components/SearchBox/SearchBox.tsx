@@ -8,75 +8,38 @@ import {
   Image,
   TouchableOpacity,
 } from 'react-native';
-import apiSearch from '../../tools/apiGet';
 import useFetch from '../../hooks/useFetch';
-
-// // search once when component loads
-// useEffect(() => {
-//   // console.log('SearchBox useEffect before if: starting = ', starting);
-//   // if (!starting) return;
-//   // setStarting(false);
-//   // setSearchTerm(pattern);
-//   // setUnsubscribed(false);
-//   apiSearch(
-//     props.data,
-//     pattern,
-//     props.setData,
-//     setSearchOK,
-//     // unsubscribed,
-//     // setUnsubscribed,
-//   );
-//   // return () => {
-//   //   setUnsubscribed(true);
-//   // };
-// }, [pattern])
 
 // var starting = true;
 export default function SearchBox(props: {
   dataType: string;
-  // setData: (dataType: any) => any;
   setData: Function;
 }) {
-  const [pattern, setSearchTerm] = useState<string>('');
-  // const [searchOK, setSearchOK] = useState(true);
-  console.log('datatype =', props.dataType, 'pattern = ', pattern);
-  // const [unsubscribed, setUnsubscribed] = useState(false);
-  // const abortController = new AbortController;
-  // var abort = abortController.abort();
-  // console.log("abort = ", abort);
-  // const controller = new AbortController;
+  const [pattern, setPattern] = useState<string>('');
 
-  // const url = `http://jsonplaceholder.typicode.com/posts`
+  interface Item {
+    // our api retunrs `Data[]`
+    Data: [ItemContent];
+  }
+
   interface ItemContent {
+    // our api retunrs `Data[]`
     firstname: string;
     lastname: string;
     key: string;
   }
-  interface Item {
-    Data: [ItemContent];
-  }
-
+  
   const {data, error, state} = useFetch<Item>(props.dataType, pattern);
-  console.log('employee data =', data);
-  console.log('state =', state);
   const searchOK: boolean = Boolean(
     (state != 'error' && data?.Data.length) || state == 'loading',
   );
+
   useEffect(() => {
-    if (state != 'loading') props.setData(data?.Data);
-  }), [data, error, state];
-  console.log('error =', error);
-  // console.log("Data[] =", data.Data)
-  console.log('searchOK', searchOK);
+    // update result list
+    if (state == 'fetched' && data?.Data.length) props.setData(data?.Data);
+  }, [data, error, state])
+    
 
-  // if (error) return <Text>There is an error.</Text>;
-  // if (!data) return <Text>Loading...</Text>;
-
-  // props.setData
-  // if (error || !data) {
-  //   setSearchOK(false);
-  //   return;
-  // }
   return (
     <View style={searchOK ? styles.searchBar : styles.searchBarFailed}>
       <View style={styles.searchBox}>
@@ -90,17 +53,27 @@ export default function SearchBox(props: {
           <TextInput
             style={styles.searchInput}
             value={pattern}
-            onChangeText={pattern => setSearchTerm(pattern)}
+            onChangeText={pattern => setPattern(pattern)}
             placeholder=" co-workers (by name or ID)"
           />
-            <View style={styles.searchBoxHint}>
-              <Text>{!searchOK && ('No match')}</Text>
-            </View>
+          <View style={styles.searchBoxHint}>
+            {/* <Text>
+              {(state == 'loading' && 'Loading...') ||
+                (!searchOK && 'No match')}
+            </Text> */}
+            <Image
+              style={styles.searchIcon}
+              source={
+                (state == 'loading' && require('../../assets/icons/spinner.png')) ||
+                (!searchOK && require('../../assets/icons/error.png'))
+              }
+            />
+          </View>
         </View>
         <View style={styles.clearSearchButtonZone}>
           <TouchableOpacity
             style={styles.clearSearchButton}
-            onPress={() => setSearchTerm('')}>
+            onPress={() => setPattern('')}>
             <Text style={styles.clearSearchButtonText}>X</Text>
           </TouchableOpacity>
         </View>
@@ -149,7 +122,6 @@ const styles = StyleSheet.create({
   searchInputWrap: {
     flex: 6,
     flexDirection: 'row',
-    // backgroundColor: 'yellow'
   },
 
   searchInput: {
@@ -164,7 +136,6 @@ const styles = StyleSheet.create({
 
   clearSearchButtonZone: {
     flex: 0.5,
-    // backgroundColor: 'red',
   },
 
   clearSearchButton: {

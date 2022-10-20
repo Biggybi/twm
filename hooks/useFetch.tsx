@@ -5,7 +5,6 @@ function get_url(urlparts: string[]) {
   // var base_url = "http://192.168.1.197:8090/twm/web";
   urlparts.unshift(base_url);
   var url = urlparts.join('/');
-  // console.log('api url =', url);
   return url;
 }
 
@@ -28,8 +27,6 @@ export default function useFetch<T = unknown>(
   pattern: string,
   options?: RequestInit,
 ): State<T> {
-  console.log('-------- refetch -------------');
-  console.log('useFetch dataType =', type, '/ pattern =', pattern);
   const url = get_url([type, pattern]);
   const cache = useRef<Cache<T>>({});
   // Used to prevent state update if the component is unmounted
@@ -44,25 +41,18 @@ export default function useFetch<T = unknown>(
   const fetchReducer = (state: State<T>, action: Action<T>): State<T> => {
     switch (action.type) {
       case 'loading':
-        console.log('action: loading');
         return {...initialState, state: action.type};
       case 'fetched':
-        console.log('action: fetched');
         return {...initialState, data: action.payload, state: action.type};
       case 'error':
-        console.log('action: error');
         return {...initialState, error: action.payload, state: action.type};
       default:
-        console.log('action: default');
         return state;
     }
   };
 
   const [state, dispatch] = useReducer(fetchReducer, initialState);
-  console.log('state =', state);
   useEffect(() => {
-    console.log('-------------------------------');
-    // Do nothing if the url is not given
     if (!url) return;
     cancelRequest.current = false;
 
@@ -75,13 +65,10 @@ export default function useFetch<T = unknown>(
       }
       try {
         const response = await fetch(url, options);
-        console.log('fetching!');
         if (!response.ok) {
-          console.log('response false');
           throw new Error(response.statusText);
         }
-        const data = (await response.json()) as T;
-        // const data = (await response.json()) as T;
+        const data = await response.json() as T;
         cache.current[url] = data;
         if (cancelRequest.current) return;
         dispatch({type: 'fetched', payload: data});
@@ -92,7 +79,6 @@ export default function useFetch<T = unknown>(
     };
 
     void fetchData();
-    console.log('data fetched');
     // Prevent state update on unmount
     return () => {
       cancelRequest.current = true;
