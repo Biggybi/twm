@@ -1,111 +1,155 @@
 import React, {useEffect, useState} from 'react';
+import {ViewStyle} from 'react-native';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialIcons';
+// import
 
 import {
+  ActivityIndicator,
   StyleSheet,
-  Text,
   TextInput,
-  View,
-  Image,
   TouchableOpacity,
+  View,
 } from 'react-native';
 import useFetch from '../../hooks/useFetch';
+import {Colors} from '../../tools/colors';
+// import { colorContext } from '../../contexts/Color/colorContext';
+import {useColor} from '../../contexts/Color/colorContext';
+import {useTabID} from '../../contexts/Tab/tabIDContext';
 
-// var starting = true;
+const styleIconLarge = {
+  size: 25,
+};
+
+const styleIconSmall = {
+  size: 20,
+};
+
 export default function SearchBox(props: {
   dataType: string;
   setData: Function;
+  placeholder: string;
 }) {
+  const tabid = useTabID();
+  console.log(tabid);
   const [pattern, setPattern] = useState<string>('');
+  const color = useColor();
+  StyleSheet.create({colorStyle: color as ViewStyle});
 
   interface Item {
-    // our api retunrs `Data[]`
-    Data: [ItemContent];
+    Data: JSX.Element[];
   }
 
-  interface ItemContent {
-    // our api retunrs `Data[]`
-    firstname: string;
-    lastname: string;
-    key: string;
-  }
-  
-  const {data, error, state} = useFetch<Item>(props.dataType, pattern);
-  const searchOK: boolean = Boolean(
-    (state != 'error' && data?.Data.length) || state == 'loading',
+  // get data from useFetch hook
+  const {data, error, status} = useFetch<Item>(props.dataType, pattern);
+
+  let searchKO: boolean = Boolean(
+    // ok if: not failed, data not empty, or loading
+    error ||
+      ((status == 'error' || data?.Data.length == 0) && status != 'loading'),
   );
+
+  let searchOver = Boolean(status == 'fetched' && data?.Data.length);
 
   useEffect(() => {
     // update result list
-    if (state == 'fetched' && data?.Data.length) props.setData(data?.Data);
-  }, [data, error, state])
-    
+    console.log('searchbox: useffect searchKO');
+
+    if (searchOver) props.setData(data?.Data);
+    return () => {
+      searchKO = true;
+    };
+  }, [data]);
 
   return (
-    <View style={searchOK ? styles.searchBar : styles.searchBarFailed}>
-      <View style={styles.searchBox}>
-        <View style={styles.searchIconWrap}>
-          <Image
-            style={styles.searchIcon}
-            source={require('../../assets/search-icon.png')}
+    <View
+      // style={
+      //   status == 'loading'
+      //     ? [styles.searchBar, styles.searchBarLoading]
+      //     : !searchOK
+      //     ? [styles.searchBar, styles.searchBarFailed]
+      //     : styles.searchBar}
+      // style={[styles.searchBar, colorstyles]}>
+      style={[
+        styles.searchBar,
+        {
+          backgroundColor: Colors[color]?.light,
+          borderColor: Colors[color]?.dark,
+        },
+      ]}>
+      {/* search icon */}
+      <MaterialCommunityIcons
+        name="search"
+        {...styleIconLarge}
+        color={Colors.foreground.dark}
+      />
+      {/* input */}
+      <TextInput
+        style={styles.searchInput}
+        value={pattern}
+        onChangeText={pattern => setPattern(pattern)}
+        placeholder={props.placeholder}
+        placeholderTextColor={Colors.background.light}
+      />
+      {/* status icon */}
+      {(searchKO && (
+        // search error icon
+        <MaterialCommunityIcons
+          name="error"
+          {...styleIconSmall}
+          color={Colors.red.light}
+        />
+      )) ||
+        (status == 'loading' && (
+          // loading indicator (rotating)
+          <ActivityIndicator style={styles.searchIcon} />
+        )) || (
+          // search success icon
+          <MaterialCommunityIcons
+            name="check-circle"
+            {...styleIconSmall}
+            color={Colors.blue.dark}
+            // color={Colors[keyof ]}
           />
-        </View>
-        <View style={styles.searchInputWrap}>
-          <TextInput
-            style={styles.searchInput}
-            value={pattern}
-            onChangeText={pattern => setPattern(pattern)}
-            placeholder=" co-workers (by name or ID)"
-          />
-          <View style={styles.searchBoxHint}>
-            {/* <Text>
-              {(state == 'loading' && 'Loading...') ||
-                (!searchOK && 'No match')}
-            </Text> */}
-            <Image
-              style={styles.searchIcon}
-              source={
-                (state == 'loading' && require('../../assets/icons/spinner.png')) ||
-                (!searchOK && require('../../assets/icons/error.png'))
-              }
-            />
-          </View>
-        </View>
-        <View style={styles.clearSearchButtonZone}>
-          <TouchableOpacity
-            style={styles.clearSearchButton}
-            onPress={() => setPattern('')}>
-            <Text style={styles.clearSearchButtonText}>X</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
+        )}
+      {/* clear button */}
+      <TouchableOpacity
+        style={styles.clearSearchButton}
+        // reset search on touch
+        onPress={() => setPattern('')}>
+        <MaterialCommunityIcons
+          name="close"
+          {...styleIconLarge}
+          color={Colors.foreground.dark}
+        />
+      </TouchableOpacity>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   searchBar: {
-    height: 50,
-    margin: 10,
+    paddingLeft: 20,
+    // backgroundColor: Colors[ color ].light,
+    // borderColor: Colors[ color ].dark,
+    // borderColor: Colors.foreground.dark,
+    // borderBottomWidth: 2,
+    flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 10,
+    // paddingHorizontal: 20,
+    marginTop: 10,
+    marginBottom: 5,
+    marginHorizontal: 10,
+    height: 40,
     borderRadius: 20,
-    borderColor: 'grey',
     borderWidth: 2,
   },
 
   searchBarFailed: {
-    height: 50,
-    margin: 10,
-    alignItems: 'center',
-    paddingHorizontal: 10,
-    borderRadius: 20,
     borderColor: 'darkorange',
-    borderWidth: 2,
   },
 
-  searchBox: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  searchBarLoading: {
+    borderColor: 'lightblue',
   },
 
   searchIconWrap: {
@@ -115,8 +159,12 @@ const styles = StyleSheet.create({
   },
 
   searchIcon: {
-    width: 20,
-    height: 20,
+    // flex: 1,
+    // marginHorizontal: 10,
+    width: 21,
+    height: 21,
+    padding: 10,
+    // backgroundColor: 'red',
   },
 
   searchInputWrap: {
@@ -125,11 +173,13 @@ const styles = StyleSheet.create({
   },
 
   searchInput: {
+    // color: Colors.red.dark,
+    marginBottom: -3,
     flex: 10,
   },
 
-  searchBoxHint: {
-    flex: 3.5,
+  statusHint: {
+    flex: 1.5,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -139,16 +189,13 @@ const styles = StyleSheet.create({
   },
 
   clearSearchButton: {
+    paddingRight: 20,
+    // backgroundColor: 'red',
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     height: '100%',
-    width: '100%',
-    textAlignVertical: 'auto',
-  },
-
-  clearSearchButtonText: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    fontSize: 19,
+    // width: '100%',
+    // textAlignVertical: 'auto',
   },
 });

@@ -1,8 +1,8 @@
 import {useEffect, useReducer, useRef} from 'react';
 
 function get_url(urlparts: string[]) {
-  var base_url = 'http://192.168.0.30:8090/twm/web';
-  // var base_url = "http://192.168.1.197:8090/twm/web";
+  // var base_url = 'http://192.168.0.21:20001/twm/web';
+  var base_url = 'http://192.168.1.133:20001/twm/web';
   urlparts.unshift(base_url);
   var url = urlparts.join('/');
   return url;
@@ -11,7 +11,7 @@ function get_url(urlparts: string[]) {
 interface State<T> {
   data: T | undefined;
   error: Error | undefined;
-  state: string;
+  status: string;
 }
 
 type Cache<T> = {[url: string]: T};
@@ -29,61 +29,65 @@ export default function useFetch<T = unknown>(
 ): State<T> {
   const url = get_url([type, pattern]);
   const cache = useRef<Cache<T>>({});
-  // Used to prevent state update if the component is unmounted
+  // prevent status update on component unmount
   const cancelRequest = useRef<boolean>(false);
   const initialState: State<T> = {
     data: undefined,
     error: undefined,
-    state: '',
+    status: '',
   };
 
-  // Keep state logic separated
-  const fetchReducer = (state: State<T>, action: Action<T>): State<T> => {
+  // Keep status logic separated
+  const fetchReducer = (status: State<T>, action: Action<T>): State<T> => {
     switch (action.type) {
       case 'loading':
-        return {...initialState, state: action.type};
+        return {...initialState, status: action.type};
       case 'fetched':
-        return {...initialState, data: action.payload, state: action.type};
+        return {...initialState, data: action.payload, status: action.type};
       case 'error':
-        return {...initialState, error: action.payload, state: action.type};
+        return {...initialState, error: action.payload, status: action.type};
       default:
-        return state;
+        return status;
     }
   };
 
-  const [state, dispatch] = useReducer(fetchReducer, initialState);
+  const [status, dispatch] = useReducer(fetchReducer, initialState);
   useEffect(() => {
     if (!url) return;
     cancelRequest.current = false;
 
     const fetchData = async () => {
       dispatch({type: 'loading'});
+      // setTimeout(() => {}, 1000);
       // If a cache exists for this url, return it
       if (cache.current[url]) {
+        // use cache
+        console.log(cache.current[url]);
         dispatch({type: 'fetched', payload: cache.current[url]});
         return;
       }
       try {
-        const response = await fetch(url, options);
-        if (!response.ok) {
-          throw new Error(response.statusText);
-        }
-        const data = await response.json() as T;
-        cache.current[url] = data;
-        if (cancelRequest.current) return;
-        dispatch({type: 'fetched', payload: data});
+        const response = await fetch(url, options); // data query
+        // if (!response.ok) throw new Error(response.statusText); // error exit
+        const data = (await response.json()) as T; // data store
+        cache.current[url] = data; // cache data
+        if (cancelRequest.current) return; // exit
+        dispatch({type: 'fetched', payload: data}); // data return
       } catch (error) {
+        // error handling
         if (cancelRequest.current) return;
         dispatch({type: 'error', payload: error as Error});
       }
     };
-
     void fetchData();
-    // Prevent state update on unmount
+
+    // Prevent status update on unmount
     return () => {
       cancelRequest.current = true;
     };
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [url]);
-  return state;
+
+  return status;
 }

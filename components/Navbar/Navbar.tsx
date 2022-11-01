@@ -1,104 +1,76 @@
-import {StyleSheet, FlatList, View} from 'react-native';
+import React from 'react';
+import {Dimensions, FlatList, StyleSheet} from 'react-native';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import {useOrientation} from '../../hooks/useOrientation';
 
+import {Colors} from '../../tools/colors';
 import INavButton, {NavButton} from './NavButton';
 
 type TNavBarList = Array<INavButton>;
 
-// definition of navbar items
+let iconComponent = (name: string, color: string): JSX.Element => {
+  return <MaterialCommunityIcons name={name} color={color} size={25} />;
+};
+
+// definition of navbar buttons
 let navBarItems: TNavBarList = [
   {
     key: 0,
-    name: 'home',
-    image: require('../../assets/icons/home.png'),
-    style: {
-      // borderWidth: 4,
-      // backgroundColor: 'red',
-      // borderColor: 'darkred',
-      // borderRadius: 20,
-      // height: '100%',
-    },
+    name: 'planning',
+    iconActive: iconComponent('calendar-today', Colors.magenta.dark),
+    iconInactive: iconComponent('calendar-today', Colors.magenta.light),
+    color: 'magenta',
   },
   {
     key: 1,
-    name: 'planning',
-    image: require('../../assets/icons/calendar.png'),
-    style: {
-      // borderWidth: 4,
-      // backgroundColor: 'pink',
-      // borderColor: 'magenta',
-      // borderRadius: 20,
-      // height: '100%',
-      // marginHorizontal: 5,
-    },
+    name: 'groups',
+    iconActive: iconComponent('account-multiple', Colors.green.dark),
+    iconInactive: iconComponent('account-multiple', Colors.green.light),
+    color: 'green',
   },
   {
     key: 2,
-    name: 'teams',
-    image: require('../../assets/icons/users-alt.png'),
-    style: {
-      // borderWidth: 4,
-      // backgroundColor: 'blue',
-      // borderColor: 'darkblue',
-      // borderRadius: 20,
-      // height: '100%',
-      // marginHorizontal: 5,
-    },
+    name: 'rooms',
+    iconActive: iconComponent('vector-square-open', Colors.blue.dark),
+    iconInactive: iconComponent('vector-square-open', Colors.blue.light),
+    color: 'blue',
   },
   {
     key: 3,
-    name: 'people',
-    image: require('../../assets/icons/users.png'),
-    style: {
-      // borderWidth: 4,
-      // backgroundColor: 'magenta',
-      // borderColor: 'purple',
-      // borderRadius: 20,
-      // height: '100%',
-      // marginHorizontal: 5,
-    },
+    name: 'favorites',
+    iconActive: iconComponent('star', Colors.yellow.dark),
+    iconInactive: iconComponent('star', Colors.yellow.light),
+    color: 'yellow',
   },
   {
     key: 4,
-    name: 'profile',
-    image: require('../../assets/icons/settings.png'),
-    style: {
-      // borderWidth: 4,
-      // backgroundColor: 'yellow',
-      // borderColor: 'darkorange',
-      // borderRadius: 20,
-      // height: '100%',
-      // marginHorizontal: 5,
-    },
+    name: 'settings',
+    iconActive: iconComponent('cog', Colors.red.dark),
+    iconInactive: iconComponent('cog', Colors.red.light),
+    color: 'red',
   },
 ];
 
-export default function Navbar(props: {
-  callback: (key: number) => void;
-  tabid: number;
-}) {
+// arguments: state for tab ID
+export default function Navbar() {
+  useOrientation();
+  const itemWidth = Dimensions.get('window').width / navBarItems.length;
+  console.log('itemwidth =', itemWidth);
   return (
-    <View>
-      <FlatList
-        // horizontal={true}
-        // onViewableItemsChanged={onViewableItemsChanged}
-        columnWrapperStyle={styles.listColumnWrapper}
-        numColumns={navBarItems.length}
-        // keyExtractor={navBarItems => navBarItems.key}
-        data={navBarItems}
-        renderItem={navBarItems => (
-          <NavButton
-            navButton={{...navBarItems.item}}
-            callback={props.callback}
-            tabid={props.tabid}
-          />
-        )}
-      />
-    </View>
+    <FlatList
+      style={styles.navBar}
+      horizontal={true}
+      indicatorStyle="white"
+      data={navBarItems}
+      renderItem={navBarItems => (
+        <NavButton navButton={{...navBarItems.item}} width={itemWidth} />
+      )}
+    />
   );
 }
 
 const styles = StyleSheet.create({
-  listColumnWrapper: {
-    height: 50,
+  navBar: {
+    backgroundColor: Colors.background.light,
   },
 });

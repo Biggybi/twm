@@ -1,9 +1,9 @@
 import {Text, View} from 'react-native';
 
-export default function Planning() {
+export default function Settings() {
   return (
     <View>
-      <Text>Planning</Text>
+      <Text>"settings"</Text>
     </View>
   );
 }
