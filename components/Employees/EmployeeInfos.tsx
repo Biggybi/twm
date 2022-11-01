@@ -1,7 +1,6 @@
 import React from 'react';
 
 import {StyleSheet, Text, View} from 'react-native';
-// import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {Colors} from '../../tools/colors';
 

@@ -18,18 +18,12 @@ const pages: JSX.Element[] = [
   <TabPage<IEmployee>
     dataType="employee"
     renderItem={() => <Employees />}
-    // renderItem={employeedata => (
-    //   <Card cardInfos={<EmployeeInfos employee={employeedata.item} />} />
-    // )}
     placeholderText="employee (by name or -ID)"
     searchBoxEnable={true}
   />,
   <TabPage<IRoom>
     dataType="room"
     renderItem={() => <Rooms />}
-    // renderItem={roomdata => (
-    //   <Card cardInfos={<RoomInfos room={roomdata.item} />} />
-    // )}
     placeholderText="room (by name or -ID)"
   />,
   <Favorites />,
