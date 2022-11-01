@@ -22,7 +22,10 @@ export default function Rooms() {
         }
         stickyHeaderIndices={[0]}
         renderItem={roomdata => (
-          <Card cardInfos={<RoomInfos room={roomdata.item} />} />
+          <Card
+            cardInfos={<RoomInfos room={roomdata.item} />}
+            showActionButtons={true}
+          />
         )}
       />
     </View>
