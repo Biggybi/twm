@@ -64,16 +64,15 @@ export function NavButton(props: {navButton: INavButton; width?: number}) {
 
 const styles = StyleSheet.create({
   buttonActive: {
-    alignItems: 'center',
     borderTopWidth: 4,
+    alignItems: 'center',
     justifyContent: 'center',
     height: '100%',
   },
 
   buttonInactive: {
-    borderColor: Colors.background.light,
+    paddingTop: 4,
     alignItems: 'center',
-    borderTopWidth: 4,
     justifyContent: 'center',
     height: '100%',
   },
