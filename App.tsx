@@ -4,6 +4,7 @@ import {StyleSheet, View} from 'react-native';
 // import Teams from './components/Teams/Teams';
 import {Colors} from './tools/colors';
 import {ColorProvider} from './contexts/Color/colorContext';
+import {UserIDProvider, useUserID} from './contexts/User/userContext';
 import {TabIDProvider} from './contexts/Tab/tabIDContext';
 import CurrentTabPage from './components/TabPage/CurrentTabPage';
 
@@ -11,18 +12,22 @@ export default function App() {
   console.log(
     '===============================================================================',
   );
+  const userID = useUserID()
+  console.log("user id =", userID);
 
   // that's the application
   return (
-    <TabIDProvider>
-      <ColorProvider>
-        <View style={styles.pageWrap}>
-          <View style={styles.body}>
-            <CurrentTabPage />
+    <ColorProvider>
+      <UserIDProvider>
+        <TabIDProvider>
+          <View style={styles.pageWrap}>
+            <View style={styles.body}>
+              <CurrentTabPage />
             </View>
-        </View>
-      </ColorProvider>
-    </TabIDProvider>
+          </View>
+        </TabIDProvider>
+      </UserIDProvider>
+    </ColorProvider>
   );
 }
 
