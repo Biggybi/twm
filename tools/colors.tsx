@@ -37,6 +37,7 @@ export const Colors: IColors<IColor> = {
   foreground: {dark: '#383a42', light: '#dcdfe4'},
   background: {dark: '#fafafa', light: '#282c34'},
   tabAccent: {dark: '', light: ''},
+  gray: {light: '#6e7282', dark: '#c2c4cb'},
 };
 
 // export const Colors = new Map<string, {dark: string; light: string}>([
