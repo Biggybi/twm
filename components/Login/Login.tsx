@@ -6,7 +6,6 @@ import {
   TextInput,
   TouchableOpacity,
   Image,
-  Dimensions,
 } from 'react-native';
 import {useUserIDUpdate} from '../../contexts/User/userContext';
 import {Colors} from '../../tools/colors';
@@ -16,98 +15,155 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   // trying to change password?
-  const [resetMode, setResetMode] = useState(false);
-  const toggleUserID = useUserIDUpdate() as unknown as (s: string) => string;
+  const [resetPasswordMode, setResetMode] = useState(false);
+  // const toggleUserID = useUserIDUpdate() as unknown as (s: string) => string;
+  const [loginFail, setLoginFail] = useState(false);
+  const toggleUser = useUserIDUpdate() as unknown as (s: string) => string;
+
   const tryLogin = (): boolean => {
-    let ret = Users.get(email)?.password == password;
-    console.log('tryLogin:', Users.get(email)?.password, email, password, ret);
-    return ret;
+    if (Users.get(email)?.password != password) {
+      setLoginFail(true);
+      return false;
+    }
+    setLoginFail(false);
+    toggleUser(Users.get(email)!.id);
+    return true;
   };
-  console.log(resetMode);
-  const refInputPassword = useRef<TextInput>(null);
+
+  const tryResetPassword = (): boolean => {
+    console.log('to implement');
+    return true;
+  };
+
+  const handleChangeText = (text: string, type: string): void => {
+    if (type == 'password') setPassword(text);
+    if (type == 'email') setEmail(text);
+    setLoginFail(false);
+  };
+
+  console.log(resetPasswordMode);
+  const refPasswordInput = useRef<TextInput>(null);
   return (
-    <View style={styles.container}>
-      <Image
-        style={styles.logo}
-        source={require('../../assets/systema-logo.png')}
-      />
-      <View>
-        <Text style={styles.subtitle}>Tele Work</Text>
-        <Text style={styles.subtitle}>Management</Text>
-      </View>
-      <View style={styles.infos}>
-        <View style={styles.inputView}>
-          <TextInput
-            style={styles.inputText}
-            // this works despite compiler warning!! (android only)
-            cursorColor={Colors.green.dark}
-            selectionColor={Colors.green.light}
-            placeholder={'  Email'}
-            placeholderTextColor={Colors.gray.light}
-            autoFocus={true}
-            keyboardType="email-address"
-            returnKeyType="next"
-            onChangeText={text => setEmail(text)}
-            onSubmitEditing={() => refInputPassword.current?.focus()}
-          />
+    <View style={styles.wrapper}>
+      {/* title */}
+      <View style={styles.titleSection}>
+        <Image
+          style={styles.logo}
+          source={require('../../assets/systema-logo.png')}
+        />
+        <View>
+          <Text style={styles.subtitle}>TeleWork Management</Text>
         </View>
-        {!resetMode ? (
-          <View style={styles.inputView}>
+      </View>
+      {/* mainSection: inputs + buttons */}
+      <View style={styles.mainSection}>
+        {/* inputs */}
+        <View style={styles.inputsSection}>
+          {/* login */}
+          <View
+            style={
+              !loginFail
+                ? styles.inputBtn
+                : {...styles.inputBtn, ...styles.inputBtnFail}
+            }>
             <TextInput
               style={styles.inputText}
-              // this works despite compiler warning!! (android only)
-              cursorColor={Colors.green.dark}
-              selectionColor={Colors.green.light}
-              placeholder={'  Password'}
+              selectionColor={Colors.red.light}
+              placeholder={'  Email'}
               placeholderTextColor={Colors.gray.light}
-              secureTextEntry
-              onChangeText={text => setPassword(text)}
-              ref={refInputPassword}
+              autoFocus={true}
+              keyboardType="email-address"
+              returnKeyType="next"
+              onChangeText={text => handleChangeText(text, 'email')}
+              onSubmitEditing={() => refPasswordInput.current?.focus()}
             />
           </View>
-        ) : (
-          <View style={styles.inputViewHidden}></View>
-        )}
-        <TouchableOpacity onPress={() => setResetMode(!resetMode)}>
-          <Text style={styles.resetPassText}>Reset password</Text>
-        </TouchableOpacity>
-        {!resetMode ? (
-          <TouchableOpacity
-            style={styles.loginBtn}
-            onPress={() => (tryLogin() ? toggleUserID(email) : null)}>
-            <Text style={styles.loginText}>Login</Text>
-          </TouchableOpacity>
-        ) : (
-          <TouchableOpacity
-            style={styles.loginBtnReset}
-            onPress={() => (tryLogin() ? toggleUserID(email) : null)}>
-            <Text style={styles.loginText}>Reset Password</Text>
-          </TouchableOpacity>
-        )}
-        <TouchableOpacity>
-          <Text style={styles.loginText}>Signup</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.adminBtn}
-          onPress={() => toggleUserID('admin')}>
-          <Text style={styles.loginText}>Admin</Text>
-        </TouchableOpacity>
-        <View style={{alignItems: 'center'}}></View>
+          {/* password */}
+          {!resetPasswordMode ? (
+            <View
+              style={
+                !loginFail
+                  ? styles.inputBtn
+                  : {...styles.inputBtn, ...styles.inputBtnFail}
+              }>
+              <TextInput
+                style={styles.inputText}
+                selectionColor={Colors.red.light}
+                placeholder={'  Password'}
+                placeholderTextColor={Colors.gray.light}
+                secureTextEntry
+                onChangeText={text => handleChangeText(text, 'password')}
+                onSubmitEditing={() => tryLogin()}
+                ref={refPasswordInput}
+              />
+            </View>
+          ) : (
+            //* password (hidden)
+            <View style={styles.inputViewHidden}></View>
+          )}
+        </View>
+        {/* buttonsSection */}
+        <View style={styles.buttonsSection}>
+          {/* Submit button */}
+          {!resetPasswordMode ? (
+            // normal: login / signup
+            <>
+              <TouchableOpacity
+                style={styles.loginBtn}
+                onPress={() => tryLogin()}>
+                <Text style={styles.btnText}>Login</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={{...styles.loginBtn, ...styles.loginBtnReset}}>
+                <Text style={styles.btnText}>Signup</Text>
+              </TouchableOpacity>
+            </>
+          ) : (
+            // reset mode: login only
+            <TouchableOpacity
+              style={{
+                ...styles.loginBtn,
+                backgroundColor: Colors.red.dark,
+              }}
+              onPress={() => tryResetPassword()}>
+              <Text style={styles.btnText}>Send Email</Text>
+            </TouchableOpacity>
+          )}
+          {/* Reset password toggler */}
+          {!resetPasswordMode ? (
+            <TouchableOpacity
+              style={styles.resetPass}
+              onPress={() => setResetMode(true)}>
+              <Text style={styles.resetPassText}>Reset Password</Text>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              style={styles.resetPass}
+              onPress={() => setResetMode(false)}>
+              <Text style={styles.resetPassText}>Login</Text>
+            </TouchableOpacity>
+          )}
+        </View>
       </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  wrapper: {
     flex: 1,
     backgroundColor: Colors.background.dark,
     alignItems: 'center',
   },
+  titleSection: {
+    alignItems: 'center',
+  },
   logo: {
-    width: Dimensions.get('window').width,
-    height: 170,
-    resizeMode: 'center',
+    // width: Dimensions.get('window').width,
+    // width: '80%',
+    marginTop: 10,
+    height: 180,
+    resizeMode: 'contain',
   },
   title: {
     fontWeight: 'bold',
@@ -115,43 +171,39 @@ const styles = StyleSheet.create({
     color: Colors.foreground.light,
   },
   subtitle: {
-    alignContent: 'stretch',
     fontWeight: 'bold',
     fontSize: 20,
     color: Colors.gray.light,
   },
-  infos: {
-    marginTop: 20,
+  mainSection: {
+    marginTop: 10,
     width: '80%',
   },
-  inputViewHidden: {
-    color: Colors.foreground.dark,
-    borderRadius: 20,
-    height: 50,
-    marginBottom: 20,
-    // justifyContent: 'center',
-    paddingHorizontal: 20,
-    color: Colors.foreground.light,
+  inputsSection: {
+    height: 120,
+    marginVertical: 10,
   },
-  inputView: {
+  buttonsSection: {
+    height: 120,
+    marginVertical: 10,
+  },
+  inputViewHidden: {
+    height: 50,
+    marginVertical: 5,
+  },
+  inputBtn: {
     backgroundColor: Colors.gray.dark,
     borderRadius: 20,
     height: 50,
-    marginBottom: 20,
-    // justifyContent: 'center',
     paddingHorizontal: 20,
+    marginVertical: 5,
+  },
+  inputBtnFail: {
+    backgroundColor: Colors.yellow.light,
   },
   inputText: {
+    fontSize: 16,
     color: Colors.foreground.dark,
-  },
-  resetPass: {
-    color: Colors.background.dark,
-    backgroundColor: Colors.red.dark,
-    height: 20,
-  },
-  resetPassText: {
-    fontSize: 14,
-    color: Colors.gray.light,
   },
   loginBtn: {
     height: 50,
@@ -159,17 +211,14 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 40,
+    marginVertical: 5,
   },
   loginBtnReset: {
-    height: 50,
-    backgroundColor: Colors.yellow.light,
-    borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 40,
+    backgroundColor: Colors.magenta.light,
+    // marginTop: 20,
   },
   adminBtn: {
+    bottom: 0,
     height: 50,
     backgroundColor: Colors.red.light,
     borderRadius: 20,
@@ -177,7 +226,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginTop: 80,
   },
-  loginText: {
+  btnText: {
+    fontSize: 16,
     color: Colors.background.dark,
+  },
+  resetPass: {
+    position: 'absolute',
+    bottom: -40,
+    alignItems: 'center',
+    paddingVertical: 10,
+  },
+  resetPassText: {
+    fontSize: 14,
+    color: Colors.gray.light,
   },
 });
