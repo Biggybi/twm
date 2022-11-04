@@ -46,14 +46,12 @@ export default function Login() {
   return (
     <View style={styles.wrapper}>
       {/* title */}
-      <View style={styles.titleSection}>
-        <Image
-          style={styles.logo}
-          source={require('../../assets/systema-logo.png')}
-        />
-        <View>
-          <Text style={styles.subtitle}>TeleWork Management</Text>
-        </View>
+      <Image
+        style={styles.logo}
+        source={require('../../assets/systema-logo.png')}
+      />
+      <View>
+        <Text style={styles.title}>TeleWork Management</Text>
       </View>
       {/* mainSection: inputs + buttons */}
       <View style={styles.mainSection}>
@@ -144,6 +142,13 @@ export default function Login() {
             </TouchableOpacity>
           )}
         </View>
+        <TouchableOpacity
+          // for testing purposes! don't put in prod!
+          style={styles.adminBtn}
+          onPress={() => toggleUser('test_user')}>
+          <Text style={styles.btnText}>test_user direct login</Text>
+        </TouchableOpacity>
+        <View style={{alignItems: 'center'}}></View>
       </View>
     </View>
   );
@@ -155,22 +160,12 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.background.dark,
     alignItems: 'center',
   },
-  titleSection: {
-    alignItems: 'center',
-  },
   logo: {
-    // width: Dimensions.get('window').width,
-    // width: '80%',
     marginTop: 10,
     height: 180,
     resizeMode: 'contain',
   },
   title: {
-    fontWeight: 'bold',
-    fontSize: 30,
-    color: Colors.foreground.light,
-  },
-  subtitle: {
     fontWeight: 'bold',
     fontSize: 20,
     color: Colors.gray.light,
@@ -187,10 +182,6 @@ const styles = StyleSheet.create({
     height: 120,
     marginVertical: 10,
   },
-  inputViewHidden: {
-    height: 50,
-    marginVertical: 5,
-  },
   inputBtn: {
     backgroundColor: Colors.gray.dark,
     borderRadius: 20,
@@ -205,6 +196,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: Colors.foreground.dark,
   },
+  inputViewHidden: {
+    height: 50,
+    marginVertical: 5,
+  },
   loginBtn: {
     height: 50,
     backgroundColor: Colors.blue.light,
@@ -215,7 +210,6 @@ const styles = StyleSheet.create({
   },
   loginBtnReset: {
     backgroundColor: Colors.magenta.light,
-    // marginTop: 20,
   },
   adminBtn: {
     bottom: 0,
