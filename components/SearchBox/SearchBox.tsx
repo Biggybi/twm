@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from 'react';
-import {ViewStyle} from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialIcons';
 // import
 
@@ -14,61 +13,57 @@ import useFetch from '../../hooks/useFetch';
 import {Colors} from '../../tools/colors';
 // import { colorContext } from '../../contexts/Color/colorContext';
 import {useColor} from '../../contexts/Color/colorContext';
-import {useTabID} from '../../contexts/Tab/tabIDContext';
+import useDebounce from '../../hooks/useDebounce';
 
 const styleIconLarge = {
-  size: 25,
+  size: 30,
 };
 
 const styleIconSmall = {
-  size: 20,
+  size: 25,
 };
+
+interface Item {
+  Data: JSX.Element[];
+}
 
 export default function SearchBox(props: {
   dataType: string;
   setData: Function;
   placeholder: string;
 }) {
-  const tabid = useTabID();
-  console.log(tabid);
-  const [pattern, setPattern] = useState<string>('');
+  // user input + debounce
+  const [inputTerm, setInputTerm] = useState<string>('');
+  const debouncedInputTerm = useDebounce(inputTerm, 200);
+
+  // fetch data hook
+  const {data, error, status} = useFetch<Item>(
+    props.dataType,
+    debouncedInputTerm,
+  );
+
+  // current color
   const color = useColor();
-  StyleSheet.create({colorStyle: color as ViewStyle});
 
-  interface Item {
-    Data: JSX.Element[];
-  }
+  useEffect(() => {
+    // update result list
+    if (hasData) props.setData(data?.Data);
+    return () => {
+      searchKO = true;
+    };
+  }, [debouncedInputTerm]);
 
-  // get data from useFetch hook
-  const {data, error, status} = useFetch<Item>(props.dataType, pattern);
-
+  // ko: no data or error
   let searchKO: boolean = Boolean(
-    // ok if: not failed, data not empty, or loading
     error ||
       ((status == 'error' || data?.Data.length == 0) && status != 'loading'),
   );
 
-  let searchOver = Boolean(status == 'fetched' && data?.Data.length);
-
-  useEffect(() => {
-    // update result list
-    console.log('searchbox: useffect searchKO');
-
-    if (searchOver) props.setData(data?.Data);
-    return () => {
-      searchKO = true;
-    };
-  }, [data]);
+  // some data was fetched
+  let hasData = Boolean(status == 'fetched' && data?.Data.length);
 
   return (
     <View
-      // style={
-      //   status == 'loading'
-      //     ? [styles.searchBar, styles.searchBarLoading]
-      //     : !searchOK
-      //     ? [styles.searchBar, styles.searchBarFailed]
-      //     : styles.searchBar}
-      // style={[styles.searchBar, colorstyles]}>
       style={[
         styles.searchBar,
         {
@@ -85,8 +80,8 @@ export default function SearchBox(props: {
       {/* input */}
       <TextInput
         style={styles.searchInput}
-        value={pattern}
-        onChangeText={pattern => setPattern(pattern)}
+        value={inputTerm}
+        onChangeText={inputTerm => setInputTerm(inputTerm)}
         placeholder={props.placeholder}
         placeholderTextColor={Colors.background.light}
       />
@@ -96,12 +91,15 @@ export default function SearchBox(props: {
         <MaterialCommunityIcons
           name="error"
           {...styleIconSmall}
-          color={Colors.red.light}
+          color={Colors.red.dark}
         />
       )) ||
         (status == 'loading' && (
           // loading indicator (rotating)
-          <ActivityIndicator style={styles.searchIcon} />
+          <ActivityIndicator
+            color={Colors.blue.dark}
+            style={styles.searchIcon}
+          />
         )) || (
           // search success icon
           <MaterialCommunityIcons
@@ -115,7 +113,7 @@ export default function SearchBox(props: {
       <TouchableOpacity
         style={styles.clearSearchButton}
         // reset search on touch
-        onPress={() => setPattern('')}>
+        onPress={() => setInputTerm('')}>
         <MaterialCommunityIcons
           name="close"
           {...styleIconLarge}
@@ -129,18 +127,14 @@ export default function SearchBox(props: {
 const styles = StyleSheet.create({
   searchBar: {
     paddingLeft: 20,
-    // backgroundColor: Colors[ color ].light,
-    // borderColor: Colors[ color ].dark,
-    // borderColor: Colors.foreground.dark,
-    // borderBottomWidth: 2,
     flexDirection: 'row',
     alignItems: 'center',
     // paddingHorizontal: 20,
     marginTop: 10,
     marginBottom: 5,
     marginHorizontal: 10,
-    height: 40,
-    borderRadius: 20,
+    height: 50,
+    borderRadius: 25,
     borderWidth: 2,
   },
 
@@ -161,9 +155,10 @@ const styles = StyleSheet.create({
   searchIcon: {
     // flex: 1,
     // marginHorizontal: 10,
-    width: 21,
-    height: 21,
+    width: 25,
+    height: 25,
     padding: 10,
+    color: Colors.blue.dark,
     // backgroundColor: 'red',
   },
 
@@ -174,7 +169,9 @@ const styles = StyleSheet.create({
 
   searchInput: {
     // color: Colors.red.dark,
-    marginBottom: -3,
+    fontSize: 16,
+    // marginBottom: -3,
+    alignContent: 'center',
     flex: 10,
   },
 
