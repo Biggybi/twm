@@ -1,9 +1,12 @@
-import React, {Dispatch, SetStateAction, useContext, useState} from 'react';
-import {createContext} from 'react';
+import React, {
+  createContext,
+  Dispatch,
+  SetStateAction,
+  useContext,
+  useState,
+} from 'react';
 
-export const colorContext = createContext<string>('');
-
-const ColorContext = createContext('background');
+const ColorContext = createContext('');
 const ColorUpdateContext = createContext<Dispatch<SetStateAction<string>>>(
   () => '',
 );

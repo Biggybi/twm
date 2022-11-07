@@ -28,8 +28,8 @@ interface Props {
 
 export function NavButton({navButton, width}: Props) {
   const tabID = useTabID();
-  const toggleColor = useColorUpdate() as unknown as (s: string) => string;
-  const toggleTabID = useTabIDUpdate() as unknown as (s: number) => string;
+  const toggleColor = useColorUpdate();
+  const toggleTabID = useTabIDUpdate();
 
   const styles = StyleSheet.create({
     active: {

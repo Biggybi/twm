@@ -18,7 +18,7 @@ export default function Login() {
   const [resetPasswordMode, setResetMode] = useState(false);
   // const toggleUserID = useUserIDUpdate() as unknown as (s: string) => string;
   const [loginFail, setLoginFail] = useState(false);
-  const toggleUser = useUserIDUpdate() as unknown as (s: string) => string;
+  const toggleUser = useUserIDUpdate();
 
   const tryLogin = (): boolean => {
     if (Users.get(email)?.password != password) {
