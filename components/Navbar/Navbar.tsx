@@ -55,7 +55,6 @@ let navBarItems: TNavBarList = [
 export default function Navbar() {
   useOrientation();
   const itemWidth = Dimensions.get('window').width / navBarItems.length;
-  console.log('itemwidth =', itemWidth);
   return (
     <FlatList
       style={styles.navBar}

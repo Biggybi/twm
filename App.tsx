@@ -9,13 +9,9 @@ import {TabIDProvider} from './contexts/Tab/tabIDContext';
 import CurrentTabPage from './components/TabPage/CurrentTabPage';
 
 export default function App() {
-  console.log(
-    '===============================================================================',
-  );
   const userID = useUserID();
-  console.log('user id =', userID);
 
-  // that's the application
+  console.log('======================== App Start ========================');
   return (
     <ColorProvider>
       <UserIDProvider>
@@ -31,7 +27,6 @@ export default function App() {
   );
 }
 
-// styles for components
 const styles = StyleSheet.create({
   pageWrap: {
     flex: 1,

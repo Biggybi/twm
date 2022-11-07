@@ -7,7 +7,7 @@ import Employees from '../Employees/Employees';
 import Favorites from '../Favorites/Favorites';
 import Navbar from '../Navbar/Navbar';
 import Planning from '../Planning/Planning';
-import {default as IRoom} from '../Rooms/RoomInfos';
+import {IRoom} from '../Rooms/RoomInfos';
 import Rooms from '../Rooms/Rooms';
 import Settings from '../Settings/Settings';
 import TabPage from './TabPage';

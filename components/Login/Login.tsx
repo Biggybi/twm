@@ -41,7 +41,6 @@ export default function Login() {
     setLoginFail(false);
   };
 
-  console.log(resetPasswordMode);
   const refPasswordInput = useRef<TextInput>(null);
   return (
     <View style={styles.wrapper}>

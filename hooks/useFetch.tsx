@@ -30,14 +30,14 @@ export default function useFetch<T = unknown>(
   const url = get_url([type, pattern]);
   const cache = useRef<Cache<T>>({});
   // prevent status update on component unmount
-  const cancelRequest = useRef<boolean>(false);
+  const cancelRequest = useRef(false);
   const initialState: State<T> = {
     data: undefined,
     error: undefined,
     status: '',
   };
 
-  console.log('useFetch hook call');
+  console.log('-> useFetch');
 
   // Keep status logic separated
   const fetchReducer = (status: State<T>, action: Action<T>): State<T> => {
@@ -60,11 +60,8 @@ export default function useFetch<T = unknown>(
 
     const fetchData = async () => {
       dispatch({type: 'loading'});
-      // setTimeout(() => {}, 1000);
-      // If a cache exists for this url, return it
+      // use cache
       if (cache.current[url]) {
-        // use cache
-        console.log('fetch cache:', cache.current[url]);
         dispatch({type: 'fetched', payload: cache.current[url]});
         return;
       }
@@ -72,7 +69,7 @@ export default function useFetch<T = unknown>(
         const response = await fetch(url, options); // data query
         // if (!response.ok) throw new Error(response.statusText); // error exit
         const data = (await response.json()) as T; // data store
-        cache.current[url] = data; // cache data
+        cache.current[url] = data; // data cache
         if (cancelRequest.current) return; // exit
         dispatch({type: 'fetched', payload: data}); // data return
       } catch (error) {
@@ -83,12 +80,9 @@ export default function useFetch<T = unknown>(
     };
     void fetchData();
 
-    // Prevent status update on unmount
     return () => {
       cancelRequest.current = true;
     };
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [url]);
 
   return status;
