@@ -7,22 +7,15 @@ import React, {
 } from 'react';
 
 const ColorContext = createContext('');
-const ColorUpdateContext = createContext<Dispatch<SetStateAction<string>>>(
-  () => '',
-);
+const ColorUpdateContext = createContext<
+  Dispatch<SetStateAction<string>> | undefined
+>(undefined);
 
-export function useColor(): string {
-  console.log('useColor -> context = ', useContext(ColorContext));
-  return useContext(ColorContext);
-}
+export const useColor = () => useContext(ColorContext);
+export const useColorUpdate = () => useContext(ColorUpdateContext);
 
-export function useColorUpdate() {
-  return useContext(ColorUpdateContext);
-}
-
-export function ColorProvider(props: {children: JSX.Element}) {
+export const ColorProvider = (props: {children: JSX.Element}) => {
   const [color, setColor] = useState('');
-
   return (
     <ColorContext.Provider value={color}>
       <ColorUpdateContext.Provider value={setColor}>
@@ -30,4 +23,4 @@ export function ColorProvider(props: {children: JSX.Element}) {
       </ColorUpdateContext.Provider>
     </ColorContext.Provider>
   );
-}
+};

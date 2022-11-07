@@ -14,7 +14,7 @@ export default function App() {
   console.log('======================== App Start ========================');
   return (
     <ColorProvider>
-      <UserIDProvider>
+      <UserIDProvider /* login page or children*/>
         <TabIDProvider>
           <View style={styles.pageWrap}>
             <View style={styles.body}>

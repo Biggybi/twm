@@ -8,27 +8,20 @@ import React, {
 import Login from '../../components/Login/Login';
 
 const UserIDContext = createContext('');
-const UserIDUpdateContext = createContext<Dispatch<SetStateAction<string>>>(
-  () => '',
-);
+const UserIDUpdateContext = createContext<
+  Dispatch<SetStateAction<string>> | undefined
+>(undefined);
 
-export function useUserID(): string {
-  console.log('useUserID -> context = ', useContext(UserIDContext));
-  return useContext(UserIDContext);
-}
+export const useUserID = () => useContext(UserIDContext);
+export const useUserIDUpdate = () => useContext(UserIDUpdateContext);
 
-export function useUserIDUpdate() {
-  return useContext(UserIDUpdateContext);
-}
-
-export function UserIDProvider(props: {children: JSX.Element}) {
+export const UserIDProvider = (props: {children: JSX.Element}) => {
   const [userID, setUserID] = useState('');
-
   return (
-    <UserIDContext.Provider value={userID as string}>
+    <UserIDContext.Provider value={userID}>
       <UserIDUpdateContext.Provider value={setUserID}>
         {userID ? props.children : <Login />}
       </UserIDUpdateContext.Provider>
     </UserIDContext.Provider>
   );
-}
+};

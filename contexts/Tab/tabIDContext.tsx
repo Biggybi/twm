@@ -7,22 +7,15 @@ import React, {
 } from 'react';
 
 const TabIDContext = createContext(0);
-const TabIDUpdateContext = createContext<Dispatch<SetStateAction<number>>>(
-  () => 0,
-);
+const TabIDUpdateContext = createContext<
+  Dispatch<SetStateAction<number>> | undefined
+>(undefined);
 
-export function useTabID() {
-  console.log('useTabID -> context = ', useContext(TabIDContext));
-  return useContext(TabIDContext);
-}
+export const useTabID = () => useContext(TabIDContext);
+export const useTabIDUpdate = () => useContext(TabIDUpdateContext);
 
-export function useTabIDUpdate() {
-  return useContext(TabIDUpdateContext);
-}
-
-export function TabIDProvider(props: {children: JSX.Element}) {
+export const TabIDProvider = (props: {children: JSX.Element}) => {
   const [tabID, setTabID] = useState(2);
-
   return (
     <TabIDContext.Provider value={tabID}>
       <TabIDUpdateContext.Provider value={setTabID}>
@@ -30,4 +23,4 @@ export function TabIDProvider(props: {children: JSX.Element}) {
       </TabIDUpdateContext.Provider>
     </TabIDContext.Provider>
   );
-}
+};
