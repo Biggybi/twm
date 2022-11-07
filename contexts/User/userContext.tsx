@@ -1,32 +1,27 @@
-import React, {useContext, useState} from 'react';
+import React, {Dispatch, SetStateAction, useContext, useState} from 'react';
 import {createContext} from 'react';
 import Login from '../../components/Login/Login';
 
-export const userIDContext = createContext<string>('');
-
 const UserIDContext = createContext('');
-const UserIDUpdateContext = createContext('');
+const UserIDUpdateContext = createContext<Dispatch<SetStateAction<string>>>(
+  () => '',
+);
 
 export function useUserID(): string {
   console.log('useUserID -> context = ', useContext(UserIDContext));
   return useContext(UserIDContext);
 }
 
-export function useUserIDUpdate(): string {
+export function useUserIDUpdate() {
   return useContext(UserIDUpdateContext);
 }
 
 export function UserIDProvider(props: {children: JSX.Element}) {
   const [userID, setUserID] = useState('');
 
-  function toggleUserID(userID: string): void {
-    console.log('USERID PROVIDER userID = ', userID);
-    setUserID(userID);
-  }
-
   return (
     <UserIDContext.Provider value={userID as string}>
-      <UserIDUpdateContext.Provider value={toggleUserID as unknown as string}>
+      <UserIDUpdateContext.Provider value={setUserID}>
         {userID ? props.children : <Login />}
       </UserIDUpdateContext.Provider>
     </UserIDContext.Provider>

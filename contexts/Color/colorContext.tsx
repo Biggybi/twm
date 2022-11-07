@@ -1,33 +1,28 @@
-import React, {useContext, useState} from 'react';
+import React, {Dispatch, SetStateAction, useContext, useState} from 'react';
 import {createContext} from 'react';
-import {Colors} from '../../tools/colors';
 
 export const colorContext = createContext<string>('');
 
 const ColorContext = createContext('background');
-const ColorUpdateContext = createContext('');
+const ColorUpdateContext = createContext<Dispatch<SetStateAction<string>>>(
+  () => '',
+);
 
 export function useColor(): string {
   console.log('useColor -> context = ', useContext(ColorContext));
   return useContext(ColorContext);
 }
 
-export function useColorUpdate(): string {
+export function useColorUpdate() {
   return useContext(ColorUpdateContext);
 }
 
 export function ColorProvider(props: {children: JSX.Element}) {
-  const [color, setColor] = useState<React.CSSProperties>({});
-
-  function toggleColor(color: React.CSSProperties): void {
-    console.log('COLOR PROVIDER color = ', color);
-    setColor(color);
-    Colors.tabAccent = color as {light: string; dark: string};
-  }
+  const [color, setColor] = useState('');
 
   return (
-    <ColorContext.Provider value={color as string}>
-      <ColorUpdateContext.Provider value={toggleColor as unknown as string}>
+    <ColorContext.Provider value={color}>
+      <ColorUpdateContext.Provider value={setColor}>
         {props.children}
       </ColorUpdateContext.Provider>
     </ColorContext.Provider>
