@@ -2,8 +2,8 @@ import {useColorUpdate} from '../../contexts/Color/colorContext';
 export default interface INavButton {
   key: number;
   name: string;
-  iconActive?: JSX.Element;
-  iconInactive?: JSX.Element;
+  iconActive: JSX.Element;
+  iconInactive: JSX.Element;
   color: string;
 }
 
@@ -21,59 +21,51 @@ const colorLight = (color: string) => {
   return Colors[color].dark;
 };
 
-export function NavButton(props: {navButton: INavButton; width?: number}) {
+interface Props {
+  navButton: INavButton;
+  width: number;
+}
+
+export function NavButton({navButton, width}: Props) {
   const tabID = useTabID();
   const toggleColor = useColorUpdate() as unknown as (s: string) => string;
-  const toggleTabID = useTabIDUpdate() as unknown as (s: number) => string;;
+  const toggleTabID = useTabIDUpdate() as unknown as (s: number) => string;
+
+  const styles = StyleSheet.create({
+    active: {
+      backgroundColor: colorDark(navButton.color),
+      borderColor: colorLight(navButton.color),
+      borderTopWidth: 4,
+      alignItems: 'center',
+      justifyContent: 'center',
+      height: '100%',
+    },
+
+    inactive: {
+      paddingTop: 4,
+      alignItems: 'center',
+      justifyContent: 'center',
+      height: '100%',
+    },
+  });
+
+  // apply color for current tab
   useEffect(() => {
-    // apply color for current tab
-    // console.log("key", props.navButton.key, "tabid", props.tabid)
-    if (props.navButton.key === tabID) toggleColor(props.navButton.color);
+    if (navButton.key === tabID) toggleColor(navButton.color);
   }, [tabID]);
+
   return (
     <TouchableOpacity
-      style={{width: props.width}}
+      style={{width: width}}
       onPress={() => {
-        toggleColor(props.navButton.color);
-        toggleTabID(props.navButton.key);
-        // props.callback(props.navButton.key);
+        toggleColor(navButton.color);
+        toggleTabID(navButton.key);
       }}>
-      {isActive(tabID, props.navButton.key) ? (
-        // Active
-        <View
-          style={[
-            styles.buttonActive,
-            {
-              backgroundColor: colorDark(props.navButton.color),
-              borderColor: colorLight(props.navButton.color),
-            },
-          ]}>
-          {props.navButton.iconActive}
-        </View>
+      {isActive(tabID, navButton.key) ? (
+        <View style={styles.active}>{navButton.iconActive}</View>
       ) : (
-        // Inactive
-        <View style={[
-            styles.buttonInactive ,
-          ]}>
-          {props.navButton.iconInactive}
-        </View>
+        <View style={[styles.inactive]}>{navButton.iconInactive}</View>
       )}
     </TouchableOpacity>
   );
 }
-
-const styles = StyleSheet.create({
-  buttonActive: {
-    borderTopWidth: 4,
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: '100%',
-  },
-
-  buttonInactive: {
-    paddingTop: 4,
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: '100%',
-  },
-});

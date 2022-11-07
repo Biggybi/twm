@@ -12,8 +12,8 @@ export default function App() {
   console.log(
     '===============================================================================',
   );
-  const userID = useUserID()
-  console.log("user id =", userID);
+  const userID = useUserID();
+  console.log('user id =', userID);
 
   // that's the application
   return (

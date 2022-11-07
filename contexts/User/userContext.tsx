@@ -27,7 +27,7 @@ export function UserIDProvider(props: {children: JSX.Element}) {
   return (
     <UserIDContext.Provider value={userID as string}>
       <UserIDUpdateContext.Provider value={toggleUserID as unknown as string}>
-        {userID?props.children:<Login/>}
+        {userID ? props.children : <Login />}
       </UserIDUpdateContext.Provider>
     </UserIDContext.Provider>
   );

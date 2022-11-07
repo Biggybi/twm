@@ -4,15 +4,18 @@ import {StyleSheet, Text, View} from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {Colors} from '../../tools/colors';
 
-export default interface IRoom {
+export interface IRoom {
   key: number;
   seats: number;
   free_seats: string;
   taken_seats: string;
 }
 
-export default function RoomInfos(props: {room: IRoom}) {
-  const room = props.room;
+interface Props {
+  room: IRoom;
+}
+
+export default function RoomInfos({room}: Props) {
   return (
     <View style={styles.CardLeft}>
       <View>
@@ -25,7 +28,8 @@ export default function RoomInfos(props: {room: IRoom}) {
           <MaterialCommunityIcons
             name="account-circle"
             size={80}
-            color={Colors.foreground.dark}/>
+            color={Colors.foreground.dark}
+          />
         </View>
         <View style={styles.CardInfos}>
           <Text style={styles.CardIDText}>Roles: {room.taken_seats}</Text>

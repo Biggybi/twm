@@ -12,8 +12,11 @@ export default interface IEmployee {
   teams: string;
 }
 
-export function EmployeeInfos(props: {employee: IEmployee}) {
-  const employee = props.employee;
+interface Props {
+  employee: IEmployee;
+}
+
+export function EmployeeInfos({employee}: Props) {
   return (
     <View style={styles.CardLeft}>
       <View>

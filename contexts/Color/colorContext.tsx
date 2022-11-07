@@ -4,7 +4,7 @@ import {Colors} from '../../tools/colors';
 
 export const colorContext = createContext<string>('');
 
-const ColorContext = createContext('');
+const ColorContext = createContext('background');
 const ColorUpdateContext = createContext('');
 
 export function useColor(): string {

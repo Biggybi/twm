@@ -15,30 +15,26 @@ import {Colors} from '../../tools/colors';
 import {useColor} from '../../contexts/Color/colorContext';
 import useDebounce from '../../hooks/useDebounce';
 
-const styleIconLarge = {
-  size: 30,
-};
-
-const styleIconSmall = {
+const styleSearchIcons = {
+  // search icon / clear search icon
+  color: Colors.gray.light,
   size: 25,
 };
 
-interface Item {
-  Data: JSX.Element[];
-}
-
-export default function SearchBox(props: {
+interface Props {
   dataType: string;
   setData: Function;
   placeholder: string;
-}) {
+}
+
+export default function SearchBox({dataType, setData, placeholder}: Props) {
   // user input + debounce
   const [inputTerm, setInputTerm] = useState<string>('');
   const debouncedInputTerm = useDebounce(inputTerm, 200);
 
   // fetch data hook
-  const {data, error, status} = useFetch<Item>(
-    props.dataType,
+  const {data, error, status} = useFetch<{Data: JSX.Element[]}>(
+    dataType,
     debouncedInputTerm,
   );
 
@@ -47,13 +43,13 @@ export default function SearchBox(props: {
 
   useEffect(() => {
     // update result list
-    if (hasData) props.setData(data?.Data);
+    if (hasData) setData(data?.Data);
     return () => {
       searchKO = true;
     };
   }, [debouncedInputTerm]);
 
-  // ko: no data or error
+  // ko: error or no result
   let searchKO: boolean = Boolean(
     error ||
       ((status == 'error' || data?.Data.length == 0) && status != 'loading'),
@@ -61,6 +57,30 @@ export default function SearchBox(props: {
 
   // some data was fetched
   let hasData = Boolean(status == 'fetched' && data?.Data.length);
+
+  let searchStatusIcon: {[key: string]: JSX.Element} = {
+    success: (
+      <MaterialCommunityIcons
+        name="check-circle"
+        size={25}
+        color={Colors.blue.dark}
+      />
+    ),
+    loading: (
+      <ActivityIndicator
+        color={Colors.blue.dark}
+        style={styles.loadingIndicator}
+      />
+    ),
+    error: (
+      <MaterialCommunityIcons name="error" size={25} color={Colors.red.dark} />
+    ),
+  };
+
+  const getSearchStatusIcon = () =>
+    (searchKO && searchStatusIcon['error']) ||
+    (status == 'loading' && searchStatusIcon['loading']) ||
+    searchStatusIcon['success'];
 
   return (
     <View
@@ -72,53 +92,23 @@ export default function SearchBox(props: {
         },
       ]}>
       {/* search icon */}
-      <MaterialCommunityIcons
-        name="search"
-        {...styleIconLarge}
-        color={Colors.foreground.dark}
-      />
+      <MaterialCommunityIcons name="search" {...styleSearchIcons} />
       {/* input */}
       <TextInput
         style={styles.searchInput}
         value={inputTerm}
         onChangeText={inputTerm => setInputTerm(inputTerm)}
-        placeholder={props.placeholder}
-        placeholderTextColor={Colors.background.light}
+        placeholder={placeholder}
+        placeholderTextColor={Colors[color]?.dark}
       />
       {/* status icon */}
-      {(searchKO && (
-        // search error icon
-        <MaterialCommunityIcons
-          name="error"
-          {...styleIconSmall}
-          color={Colors.red.dark}
-        />
-      )) ||
-        (status == 'loading' && (
-          // loading indicator (rotating)
-          <ActivityIndicator
-            color={Colors.blue.dark}
-            style={styles.searchIcon}
-          />
-        )) || (
-          // search success icon
-          <MaterialCommunityIcons
-            name="check-circle"
-            {...styleIconSmall}
-            color={Colors.blue.dark}
-            // color={Colors[keyof ]}
-          />
-        )}
-      {/* clear button */}
+      {getSearchStatusIcon()}
+      {/* clear text button */}
       <TouchableOpacity
         style={styles.clearSearchButton}
         // reset search on touch
         onPress={() => setInputTerm('')}>
-        <MaterialCommunityIcons
-          name="close"
-          {...styleIconLarge}
-          color={Colors.foreground.dark}
-        />
+        <MaterialCommunityIcons name="close" {...styleSearchIcons} />
       </TouchableOpacity>
     </View>
   );
@@ -146,13 +136,13 @@ const styles = StyleSheet.create({
     borderColor: 'lightblue',
   },
 
-  searchIconWrap: {
+  loadingIndicatorWrap: {
     flex: 0.7,
     alignContent: 'center',
     alignItems: 'center',
   },
 
-  searchIcon: {
+  loadingIndicator: {
     // flex: 1,
     // marginHorizontal: 10,
     width: 25,
@@ -168,7 +158,7 @@ const styles = StyleSheet.create({
   },
 
   searchInput: {
-    // color: Colors.red.dark,
+    color: Colors.foreground.dark,
     fontSize: 16,
     // marginBottom: -3,
     alignContent: 'center',

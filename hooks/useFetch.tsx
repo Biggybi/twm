@@ -37,6 +37,8 @@ export default function useFetch<T = unknown>(
     status: '',
   };
 
+  console.log('useFetch hook call');
+
   // Keep status logic separated
   const fetchReducer = (status: State<T>, action: Action<T>): State<T> => {
     switch (action.type) {
@@ -62,7 +64,7 @@ export default function useFetch<T = unknown>(
       // If a cache exists for this url, return it
       if (cache.current[url]) {
         // use cache
-        console.log(cache.current[url]);
+        console.log('fetch cache:', cache.current[url]);
         dispatch({type: 'fetched', payload: cache.current[url]});
         return;
       }

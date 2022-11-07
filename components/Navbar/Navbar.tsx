@@ -8,9 +8,9 @@ import INavButton, {NavButton} from './NavButton';
 
 type TNavBarList = Array<INavButton>;
 
-let iconComponent = (name: string, color: string): JSX.Element => {
-  return <MaterialCommunityIcons name={name} color={color} size={25} />;
-};
+let iconComponent = (name: string, color: string) => (
+  <MaterialCommunityIcons name={name} color={color} size={25} />
+);
 
 // definition of navbar buttons
 let navBarItems: TNavBarList = [

@@ -4,11 +4,11 @@ import {useTabID} from '../../contexts/Tab/tabIDContext';
 import {useKeyboardVisible} from '../../tools/keyboard_visible';
 import IEmployee from '../Employees/EmployeeInfos';
 import Employees from '../Employees/Employees';
-import Rooms from '../Rooms/Rooms';
 import Favorites from '../Favorites/Favorites';
 import Navbar from '../Navbar/Navbar';
 import Planning from '../Planning/Planning';
 import {default as IRoom} from '../Rooms/RoomInfos';
+import Rooms from '../Rooms/Rooms';
 import Settings from '../Settings/Settings';
 import TabPage from './TabPage';
 
