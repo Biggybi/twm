@@ -28,31 +28,39 @@ interface Props {
 }
 
 export default function SearchBox({dataType, setData, placeholder}: Props) {
+  console.log('-> SearchBox')
   // user input + debounce
   const [inputTerm, setInputTerm] = useState<string>('');
-  const debouncedInputTerm = useDebounce(inputTerm, 200);
+  const [debouncedInputTerm, setDebouncedInputTerm] = useDebounce(inputTerm, 500);
 
+  console.log('inputTerm:', inputTerm)
+  console.log('debouced:', debouncedInputTerm)
   // fetch data hook
   const {data, error, status} = useFetch<{Data: JSX.Element[]}>(
     dataType,
     debouncedInputTerm,
   );
+  console.log('data:', data?.Data)
 
   // current color
   const color = useColor();
 
   useEffect(() => {
+    console.log('useEffect')
     // update result list
-    if (hasData) setData(data?.Data);
+    if (hasData) {
+      console.log('data:', data?.Data)
+      setData(data?.Data);
+    };
     return () => {
       searchKO = true;
     };
-  }, [debouncedInputTerm]);
+  }, [data]);
 
   // ko: error or no result
   let searchKO: boolean = Boolean(
     error ||
-      ((status == 'error' || data?.Data.length == 0) && status != 'loading'),
+      (status == 'error' || (data?.Data.length == 0 && status != 'loading')),
   );
 
   // some data was fetched
@@ -107,7 +115,10 @@ export default function SearchBox({dataType, setData, placeholder}: Props) {
       <TouchableOpacity
         style={styles.clearSearchButton}
         // reset search on touch
-        onPress={() => setInputTerm('')}>
+        onPress={() => {
+          setDebouncedInputTerm('');
+          setInputTerm('');
+        }}>
         <MaterialCommunityIcons name="close" {...styleSearchIcons} />
       </TouchableOpacity>
     </View>

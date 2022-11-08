@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useRef, useState} from 'react';
 import {StyleSheet, View, FlatList} from 'react-native';
 
 import IEmployee, {EmployeeInfos} from './EmployeeInfos';

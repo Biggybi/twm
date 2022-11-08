@@ -15,7 +15,7 @@ interface Props {
   room: IRoom;
 }
 
-export default function RoomInfos({room}: Props) {
+export default function RoomInfos(room: IRoom) {
   return (
     <View style={styles.CardLeft}>
       <View>

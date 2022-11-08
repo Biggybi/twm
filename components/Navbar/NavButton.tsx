@@ -7,9 +7,9 @@ export default interface INavButton {
   color: string;
 }
 
-import {useTabID, useTabIDUpdate} from '../../contexts/Tab/tabIDContext';
+import * as tabIDContext from '../../contexts/Tab/tabIDContext';
 import {StyleSheet, View, TouchableOpacity} from 'react-native';
-import {useEffect} from 'react';
+import {Dispatch, SetStateAction, useEffect} from 'react';
 import {Colors} from '../../tools/colors';
 
 const isActive = (tabid: number, activetabid: number) => activetabid == tabid;
@@ -27,9 +27,9 @@ interface Props {
 }
 
 export function NavButton({navButton, width}: Props) {
-  const tabID = useTabID();
-  const toggleColor = useColorUpdate();
-  const toggleTabID = useTabIDUpdate();
+  const tabID = tabIDContext.useTabID();
+  const toggleColor = useColorUpdate() as Dispatch<SetStateAction<String>>;
+  const toggleTabID = tabIDContext.useTabIDUpdate() as Dispatch<SetStateAction<Number>>;
 
   const styles = StyleSheet.create({
     active: {

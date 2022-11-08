@@ -10,7 +10,6 @@ type IProps = {
 };
 
 export function Card({cardInfos, showActionButtons = true}: IProps) {
-  console.log(showActionButtons);
   return (
     <View style={[styles.Card]}>
       <View

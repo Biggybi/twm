@@ -1,25 +1,31 @@
 import React, {useState} from 'react';
 import {StyleSheet, View, FlatList, ListRenderItem} from 'react-native';
+import { Card } from '../Card/Cards';
+import { EmployeeInfos } from '../Employees/EmployeeInfos';
 
 // import IEmployee, {EmployeeInfos} from './EmployeeInfos';
 import SearchBox from '../SearchBox/SearchBox';
 
 interface Props<T> {
-  renderItem: ListRenderItem<T> | null | undefined;
+  // renderItem: ListRenderItem<T> | null | undefined;
+  // renderItem: Function;
+  renderItem: any;
   dataType: string;
   placeholderText: string;
   searchBoxEnable?: boolean;
 }
 
 export default function TabPage<T>({
-  renderItem,
   dataType,
+  renderItem,
   placeholderText,
   searchBoxEnable = true,
 }: Props<T>) {
   const [elements, setElements] = useState<T[]>([]);
   console.log('-> render tabpage');
 
+  console.log('elements: ', elements)
+  // console.log('renderitem', renderItem)
   return (
     <View style={styles.list}>
       <FlatList
@@ -34,6 +40,9 @@ export default function TabPage<T>({
           ) : null
         }
         stickyHeaderIndices={[0]}
+        // renderItem={(data: T) => (
+        //   <Card cardInfos={<EmployeeInfos employee={data} />} />
+        // )}
         renderItem={renderItem}
       />
     </View>
