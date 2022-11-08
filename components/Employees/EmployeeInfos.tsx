@@ -4,7 +4,7 @@ import {StyleSheet, Text, View} from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {Colors} from '../../tools/colors';
 
-export default interface IEmployee {
+export interface IEmployee {
   key: number;
   firstname: string;
   lastname: string;
@@ -16,7 +16,7 @@ interface Props {
   employee: IEmployee;
 }
 
-export function EmployeeInfos({employee}: Props) {
+export default function EmployeeInfos({employee}: Props) {
   return (
     <View style={styles.CardLeft}>
       <View>

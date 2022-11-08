@@ -1,9 +1,9 @@
 import React, {useRef, useState} from 'react';
 import {StyleSheet, View, FlatList} from 'react-native';
 
-import IEmployee, {EmployeeInfos} from './EmployeeInfos';
-import SearchBox from '../SearchBox/SearchBox';
 import {Card} from '../Card/Cards';
+import SearchBox from '../SearchBox/SearchBox';
+import EmployeeInfos, { IEmployee } from './EmployeeInfos';
 
 export default function Employees() {
   const [employees, setEmployees] = useState<IEmployee[]>([]);

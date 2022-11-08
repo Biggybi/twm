@@ -1,10 +1,9 @@
 import React, {useState} from 'react';
 import {StyleSheet, View, FlatList} from 'react-native';
 
-import IRoom from './RoomInfos';
-import SearchBox from '../SearchBox/SearchBox';
 import {Card} from '../Card/Cards';
-import RoomInfos from './RoomInfos';
+import SearchBox from '../SearchBox/SearchBox';
+import RoomInfos, { IRoom } from './RoomInfos';
 
 export default function Rooms() {
   const [rooms, setRooms] = useState<IRoom[]>([]);
